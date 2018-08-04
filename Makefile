@@ -44,3 +44,7 @@ build:
 .PHONY: run
 run:
 	@ ./bin/nott
+
+.PHONY: docker
+docker:
+	@ docker build -t tetafro/nott-backend-go .
