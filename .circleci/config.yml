@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  dep:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/tetafro/nott-backend-go
+    steps:
+      - checkout
+      - run:
+          name: Install dep
+          command: go get -u github.com/golang/dep/cmd/dep
+      - run:
+          name: Get project dependencies
+          command: dep ensure -vendor-only
+      - persist_to_workspace:
+          root: /go/src/github.com/tetafro
+          paths:
+            - nott-backend-go
+  test:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/tetafro/nott-backend-go
+    steps:
+      - attach_workspace:
+          at: /go/src/github.com/tetafro
+      - run:
+          name: Run tests
+          command: go test ./...
+      - run:
+          name: Install linters
+          command: go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+      - run:
+          name: Run linters
+          command: golangci-lint run
+  publish:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/tetafro/nott-backend-go
+    steps:
+      - attach_workspace:
+          at: /go/src/github.com/tetafro
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker image
+          command: docker build -t tetafro/nott-backend-go .
+      - run:
+          name: Push Docker image to Docker Hub
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push tetafro/nott-backend-go:latest
+workflows:
+  version: 2
+  main:
+    jobs:
+      - dep
+      - test:
+          requires:
+            - dep
+      - publish:
+          requires:
+            - dep
+            - test
