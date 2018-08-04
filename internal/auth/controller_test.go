@@ -27,9 +27,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		usersRepoMock := NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByEmailAndPassword(
-			user.Email, user.Password,
-		).Return(user, nil)
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(user, nil)
 
 		tokensRepoMock := NewMockTokensRepo(ctrl)
 		tokensRepoMock.EXPECT().Create(
@@ -76,9 +74,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		usersRepoMock := NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByEmailAndPassword(
-			user.Email, user.Password,
-		).Return(User{}, fmt.Errorf("error"))
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(User{}, fmt.Errorf("error"))
 
 		tokensRepoMock := NewMockTokensRepo(ctrl)
 
@@ -107,9 +103,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		usersRepoMock := NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByEmailAndPassword(
-			user.Email, user.Password,
-		).Return(user, nil)
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(user, nil)
 
 		tokensRepoMock := NewMockTokensRepo(ctrl)
 		tokensRepoMock.EXPECT().Create(

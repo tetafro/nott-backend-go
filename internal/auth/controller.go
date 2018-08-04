@@ -34,7 +34,7 @@ func (c *Controller) Login(w http.ResponseWriter, req *http.Request) {
 	}
 	defer req.Body.Close()
 
-	user, err := c.users.GetByEmailAndPassword(body.Email, body.Password)
+	user, err := c.users.GetByEmail(body.Email)
 	if err == ErrNotFound {
 		response.New().
 			WithStatus(http.StatusUnauthorized).
@@ -45,6 +45,14 @@ func (c *Controller) Login(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		c.log.Errorf("Failed to get user: %v", err)
 		response.InternalServerError().Write(w)
+		return
+	}
+
+	if !checkPassword(body.Password, user.Password) {
+		response.New().
+			WithStatus(http.StatusUnauthorized).
+			WithError(response.Error("Invalid email or password")).
+			Write(w)
 		return
 	}
 

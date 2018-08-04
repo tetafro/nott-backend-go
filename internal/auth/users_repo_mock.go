@@ -32,17 +32,17 @@ func (m *MockUsersRepo) EXPECT() *MockUsersRepoMockRecorder {
 	return m.recorder
 }
 
-// GetByEmailAndPassword mocks base method
-func (m *MockUsersRepo) GetByEmailAndPassword(email, password string) (User, error) {
-	ret := m.ctrl.Call(m, "GetByEmailAndPassword", email, password)
+// GetByEmail mocks base method
+func (m *MockUsersRepo) GetByEmail(email string) (User, error) {
+	ret := m.ctrl.Call(m, "GetByEmail", email)
 	ret0, _ := ret[0].(User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByEmailAndPassword indicates an expected call of GetByEmailAndPassword
-func (mr *MockUsersRepoMockRecorder) GetByEmailAndPassword(email, password interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmailAndPassword", reflect.TypeOf((*MockUsersRepo)(nil).GetByEmailAndPassword), email, password)
+// GetByEmail indicates an expected call of GetByEmail
+func (mr *MockUsersRepoMockRecorder) GetByEmail(email interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUsersRepo)(nil).GetByEmail), email)
 }
 
 // GetByToken mocks base method

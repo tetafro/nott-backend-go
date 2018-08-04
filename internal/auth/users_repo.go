@@ -8,7 +8,7 @@ import (
 
 // UsersRepo deals with users repository.
 type UsersRepo interface {
-	GetByEmailAndPassword(email, password string) (User, error)
+	GetByEmail(email string) (User, error)
 	GetByToken(token string) (User, error)
 }
 
@@ -22,11 +22,11 @@ func NewUsersPostgresRepo(db *gorm.DB) *UsersPostgresRepo {
 	return &UsersPostgresRepo{db: db}
 }
 
-// GetByEmailAndPassword gets user by his email and password from repository.
-func (r *UsersPostgresRepo) GetByEmailAndPassword(email, password string) (User, error) {
+// GetByEmail gets user by his email from repository.
+func (r *UsersPostgresRepo) GetByEmail(email string) (User, error) {
 	var u User
 
-	q := r.db.Where("email = ? AND password = ?", email, password)
+	q := r.db.Where("email = ?", email)
 	err := q.Find(&u).Error
 	if err == gorm.ErrRecordNotFound {
 		return User{}, ErrNotFound
@@ -43,7 +43,7 @@ func (r *UsersPostgresRepo) GetByToken(token string) (User, error) {
 	var u User
 
 	q := r.db.Joins(`JOIN token ON token.user_id = "user".id`).
-		Where("token.string = ? AND token.created + token.ttl * INTERVAL '1 second' > NOW()", token)
+		Where("token.string = ? AND token.created_at + token.ttl * INTERVAL '1 second' > NOW()", token)
 	err := q.Find(&u).Error
 	if err == gorm.ErrRecordNotFound {
 		return User{}, ErrNotFound
