@@ -9,7 +9,7 @@ type Note struct {
 	NotepadID *uint  `json:"notepad_id" gorm:"column:notepad_id"`
 	Title     string `json:"title" gorm:"column:title"`
 	Text      string `json:"text" gorm:"column:text"`
-	HTML      string `json:"html" gorm:"-"`
+	HTML      string `json:"html,omitempty" gorm:"-"`
 
 	// Managed by gorm callbacks
 	CreatedAt time.Time  `json:"-" gorm:"column:created_at"`

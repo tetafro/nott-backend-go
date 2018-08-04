@@ -227,7 +227,8 @@ func TestController(t *testing.T) {
 				"user_id": 1,
 				"notepad_id": 30,
 				"title": "Note 10",
-				"text": "Hello"
+				"text": "Hello",
+				"html": "\u003cp\u003eHello\u003c/p\u003e\n"
 			}
 		}`)
 	})

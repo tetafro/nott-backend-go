@@ -19,7 +19,9 @@ func TestController(t *testing.T) {
 	log := logrus.New()
 	log.Out = ioutil.Discard
 
-	user := User{ID: 1, Email: "bob@example.com", Password: "qwerty"}
+	password := "qwerty"
+	hash := "$2a$14$EsnwEn3C6cxQUWXvUpJ6S.XsJSku11hTSULXn8NEIG1diGcGEgrii"
+	user := User{ID: 1, Email: "bob@example.com", Password: hash}
 	token := Token{ID: 10, UserID: user.ID, String: "qwerty123", TTL: 10}
 
 	t.Run("Succesful login", func(t *testing.T) {
@@ -36,7 +38,7 @@ func TestController(t *testing.T) {
 
 		c := NewController(usersRepoMock, tokensRepoMock, log)
 
-		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: user.Password})
+		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: password})
 		if err != nil {
 			t.Fatalf("Failed to marshal json: %v", err)
 		}
@@ -63,8 +65,7 @@ func TestController(t *testing.T) {
 		testutils.AssertResponse(t, string(body), `{
 			"data": {
 				"string": "qwerty123",
-				"ttl": 10,
-				"created": "0001-01-01T00:00:00Z"
+				"ttl": 10
 			}
 		}`)
 	})
@@ -80,7 +81,7 @@ func TestController(t *testing.T) {
 
 		c := NewController(usersRepoMock, tokensRepoMock, log)
 
-		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: user.Password})
+		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: password})
 		if err != nil {
 			t.Fatalf("Failed to marshal json: %v", err)
 		}
@@ -112,7 +113,7 @@ func TestController(t *testing.T) {
 
 		c := NewController(usersRepoMock, tokensRepoMock, log)
 
-		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: user.Password})
+		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: password})
 		if err != nil {
 			t.Fatalf("Failed to marshal json: %v", err)
 		}
