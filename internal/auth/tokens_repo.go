@@ -3,7 +3,6 @@ package auth
 import (
 	"fmt"
 	"math/rand"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -44,7 +43,6 @@ func (r *TokensPostgresRepo) Create(t Token) (Token, error) {
 	if t.TTL == 0 {
 		t.TTL = defaultTokenTTL
 	}
-	t.Created = time.Now().UTC()
 
 	if err := r.db.Create(&t).Error; err != nil {
 		return Token{}, fmt.Errorf("query failed with error: %v", err)
