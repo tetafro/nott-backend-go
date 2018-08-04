@@ -1,5 +1,7 @@
 # Nott
 
+[![CircleCI](https://circleci.com/gh/tetafro/nott-backend-go.svg?style=shield)](https://circleci.com/gh/tetafro/nott-backend-go)
+
 Markdown notes service with code syntax highlighting.
 
 This repository provides backend written in go.
