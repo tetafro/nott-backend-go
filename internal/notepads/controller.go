@@ -15,11 +15,11 @@ import (
 // Controller handles HTTP API requests.
 type Controller struct {
 	repo Repo
-	log  *logrus.Logger
+	log  logrus.FieldLogger
 }
 
 // NewController creates new controller.
-func NewController(repo Repo, log *logrus.Logger) *Controller {
+func NewController(repo Repo, log logrus.FieldLogger) *Controller {
 	return &Controller{repo: repo, log: log}
 }
 

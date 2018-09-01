@@ -14,7 +14,7 @@ import (
 type UserKey struct{}
 
 // NewAuthMiddleware creates middleware that authenticates users.
-func NewAuthMiddleware(users UsersRepo, log *logrus.Logger) func(http.Handler) http.Handler {
+func NewAuthMiddleware(users UsersRepo, log logrus.FieldLogger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			token := request.GetToken(req)

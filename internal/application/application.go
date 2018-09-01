@@ -21,11 +21,11 @@ const version = "v1"
 type Application struct {
 	addr   string
 	router *chi.Mux
-	log    *logrus.Logger
+	log    logrus.FieldLogger
 }
 
 // New creates main application instance that handles all requests.
-func New(db *gorm.DB, addr string, log *logrus.Logger) (*Application, error) {
+func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error) {
 	app := &Application{addr: addr, log: log}
 
 	foldersRepo := folders.NewPostgresRepo(db)

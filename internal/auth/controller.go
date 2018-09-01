@@ -14,11 +14,11 @@ import (
 type Controller struct {
 	users  UsersRepo
 	tokens TokensRepo
-	log    *logrus.Logger
+	log    logrus.FieldLogger
 }
 
 // NewController creates new controller.
-func NewController(users UsersRepo, tokens TokensRepo, log *logrus.Logger) *Controller {
+func NewController(users UsersRepo, tokens TokensRepo, log logrus.FieldLogger) *Controller {
 	return &Controller{users: users, tokens: tokens, log: log}
 }
 
