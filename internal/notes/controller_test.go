@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
-	"github.com/tetafro/nott-backend-go/internal/httpx/request"
+	"github.com/tetafro/nott-backend-go/internal/http/request"
 	"github.com/tetafro/nott-backend-go/internal/testutils"
 )
 

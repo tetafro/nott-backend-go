@@ -6,8 +6,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/tetafro/nott-backend-go/internal/httpx/request"
-	"github.com/tetafro/nott-backend-go/internal/httpx/response"
+	"github.com/tetafro/nott-backend-go/internal/http/request"
+	"github.com/tetafro/nott-backend-go/internal/http/response"
 )
 
 // UserKey is a key for user structure inside request context.
