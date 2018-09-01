@@ -2,6 +2,7 @@ package notes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -37,7 +38,7 @@ func (c *Controller) GetList(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			response.New().
 				WithStatus(http.StatusBadRequest).
-				WithError(response.Error("Notepad ID must be an integer number")).
+				WithError(fmt.Errorf("Notepad ID must be an integer number")).
 				Write(w)
 			return
 		}
@@ -98,7 +99,7 @@ func (c *Controller) Create(w http.ResponseWriter, req *http.Request) {
 	if err = json.NewDecoder(req.Body).Decode(&n); err != nil {
 		response.New().
 			WithStatus(http.StatusBadRequest).
-			WithError(response.Error("Invalid JSON")).
+			WithError(fmt.Errorf("Invalid JSON")).
 			Write(w)
 		return
 	}
@@ -130,7 +131,7 @@ func (c *Controller) Update(w http.ResponseWriter, req *http.Request) {
 	if err = json.NewDecoder(req.Body).Decode(&n); err != nil {
 		response.New().
 			WithStatus(http.StatusBadRequest).
-			WithError(response.Error("Invalid JSON")).
+			WithError(fmt.Errorf("Invalid JSON")).
 			Write(w)
 		return
 	}

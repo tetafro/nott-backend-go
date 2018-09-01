@@ -2,6 +2,7 @@ package notepads
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
@@ -76,7 +77,7 @@ func (c *Controller) Create(w http.ResponseWriter, req *http.Request) {
 	if err = json.NewDecoder(req.Body).Decode(&n); err != nil {
 		response.New().
 			WithStatus(http.StatusBadRequest).
-			WithError(response.Error("Invalid JSON")).
+			WithError(fmt.Errorf("Invalid JSON")).
 			Write(w)
 		return
 	}
@@ -108,7 +109,7 @@ func (c *Controller) Update(w http.ResponseWriter, req *http.Request) {
 	if err = json.NewDecoder(req.Body).Decode(&n); err != nil {
 		response.New().
 			WithStatus(http.StatusBadRequest).
-			WithError(response.Error("Invalid JSON")).
+			WithError(fmt.Errorf("Invalid JSON")).
 			Write(w)
 		return
 	}

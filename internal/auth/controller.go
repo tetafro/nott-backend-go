@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
@@ -28,7 +29,7 @@ func (c *Controller) Login(w http.ResponseWriter, req *http.Request) {
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
 		response.New().
 			WithStatus(http.StatusBadRequest).
-			WithError("Invalid JSON").
+			WithError(fmt.Errorf("Invalid JSON")).
 			Write(w)
 		return
 	}
@@ -38,7 +39,7 @@ func (c *Controller) Login(w http.ResponseWriter, req *http.Request) {
 	if err == ErrNotFound {
 		response.New().
 			WithStatus(http.StatusUnauthorized).
-			WithError(response.Error("Invalid email or password")).
+			WithError(fmt.Errorf("Invalid email or password")).
 			Write(w)
 		return
 	}
@@ -51,7 +52,7 @@ func (c *Controller) Login(w http.ResponseWriter, req *http.Request) {
 	if !checkPassword(body.Password, user.Password) {
 		response.New().
 			WithStatus(http.StatusUnauthorized).
-			WithError(response.Error("Invalid email or password")).
+			WithError(fmt.Errorf("Invalid email or password")).
 			Write(w)
 		return
 	}

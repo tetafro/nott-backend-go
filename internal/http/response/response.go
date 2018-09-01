@@ -16,7 +16,7 @@ type Response struct {
 	Data interface{}
 
 	// Error is an error message
-	Error Error
+	Error error
 }
 
 // New returns a new Response.
@@ -38,7 +38,7 @@ func (r Response) WithData(data interface{}) Response {
 }
 
 // WithError returns response with error added.
-func (r Response) WithError(err Error) Response {
+func (r Response) WithError(err error) Response {
 	r.Error = err
 	return r
 }
@@ -66,9 +66,9 @@ func (r Response) Write(w http.ResponseWriter) {
 		})
 	default:
 		err = enc.Encode(struct {
-			Error Error `json:"error"`
+			Error string `json:"error"`
 		}{
-			Error: r.Error,
+			Error: r.Error.Error(),
 		})
 	}
 

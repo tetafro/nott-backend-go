@@ -1,12 +1,15 @@
 package response
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 // NotFound is a shortcut for 404 response with a
 // default message.
 func NotFound() Response {
 	code := http.StatusNotFound
-	err := Error(http.StatusText(code))
+	err := fmt.Errorf(http.StatusText(code))
 	return New().WithStatus(code).WithError(err)
 }
 
@@ -14,7 +17,7 @@ func NotFound() Response {
 // default message.
 func Unauthorized() Response {
 	code := http.StatusUnauthorized
-	err := Error(http.StatusText(code))
+	err := fmt.Errorf(http.StatusText(code))
 	return New().WithStatus(code).WithError(err)
 }
 
@@ -22,6 +25,6 @@ func Unauthorized() Response {
 // default message.
 func InternalServerError() Response {
 	code := http.StatusInternalServerError
-	err := Error(http.StatusText(code))
+	err := fmt.Errorf(http.StatusText(code))
 	return New().WithStatus(code).WithError(err)
 }

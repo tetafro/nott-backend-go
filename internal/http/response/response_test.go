@@ -1,6 +1,7 @@
 package response
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -40,7 +41,7 @@ func TestResponseWithData(t *testing.T) {
 }
 
 func TestResponseWithError(t *testing.T) {
-	e := Error("error")
+	e := fmt.Errorf("error")
 
 	r := New().WithError(e)
 
@@ -70,7 +71,7 @@ func TestResponseWrite(t *testing.T) {
 	})
 
 	t.Run("Write error response", func(t *testing.T) {
-		r := New().WithStatus(http.StatusBadRequest).WithError(Error("error"))
+		r := New().WithStatus(http.StatusBadRequest).WithError(fmt.Errorf("error"))
 
 		w := httptest.NewRecorder()
 		r.Write(w)
