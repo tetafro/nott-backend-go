@@ -8,21 +8,14 @@ This repository provides backend written in go.
 
 ## Build and run
 
-Define database creds
-```sh
-export PGUSER=postgres
-export PGPASSWORD=postgres
-export PGDATABASE=nott
-```
-
 Run PostgreSQL
 ```sh
 docker run -d \
-    --name postgres \
+    --name postgres-nott \
     --publish 127.0.0.1:5432:5432 \
-    --env "POSTGRES_USER=${PGUSER}" \
-    --env "POSTGRES_PASSWORD=${PGPASSWORD}" \
-    --env "POSTGRES_DB=${PGDATABASE}" \
+    --env "POSTGRES_USER=postgres" \
+    --env "POSTGRES_PASSWORD=postgres" \
+    --env "POSTGRES_DB=nott" \
     postgres:10
 ```
 
