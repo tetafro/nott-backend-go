@@ -21,9 +21,6 @@ func TestController(t *testing.T) {
 	log := logrus.New()
 	log.Out = ioutil.Discard
 
-	Uint := func(n uint) *uint {
-		return &n
-	}
 	user := auth.User{ID: 1}
 
 	t.Run("Get notepads", func(t *testing.T) {
@@ -31,8 +28,8 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		notepads := []Notepad{
-			{ID: 10, UserID: 20, FolderID: Uint(30), Title: "Notepad 10"},
-			{ID: 15, UserID: 25, FolderID: Uint(35), Title: "Notepad 15"},
+			{ID: 10, UserID: 20, FolderID: 30, Title: "Notepad 10"},
+			{ID: 15, UserID: 25, FolderID: 35, Title: "Notepad 15"},
 		}
 
 		repoMock := NewMockRepo(ctrl)
@@ -110,7 +107,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		notepad := Notepad{ID: id, UserID: user.ID, FolderID: Uint(30), Title: "Notepad 10"}
+		notepad := Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Create(notepad).Return(notepad, nil)
@@ -156,7 +153,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		notepad := Notepad{ID: id, UserID: user.ID, FolderID: Uint(30), Title: "Notepad 10"}
+		notepad := Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Update(notepad).Return(Notepad{}, fmt.Errorf("error"))
@@ -187,7 +184,7 @@ func TestController(t *testing.T) {
 
 		id := uint(10)
 		notepads := []Notepad{
-			{ID: id, UserID: 20, FolderID: Uint(30), Title: "Notepad 10"},
+			{ID: id, UserID: 20, FolderID: 30, Title: "Notepad 10"},
 		}
 
 		repoMock := NewMockRepo(ctrl)
@@ -261,7 +258,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		notepad := Notepad{ID: id, UserID: user.ID, FolderID: Uint(30), Title: "Notepad 10"}
+		notepad := Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Update(notepad).Return(notepad, nil)
@@ -308,7 +305,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		notepad := Notepad{ID: id, UserID: user.ID, FolderID: Uint(30), Title: "Notepad 10"}
+		notepad := Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Update(notepad).Return(Notepad{}, fmt.Errorf("error"))

@@ -31,8 +31,8 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		notes := []Note{
-			{ID: 10, UserID: user.ID, NotepadID: Uint(30), Title: "Note 10", Text: "Hello"},
-			{ID: 15, UserID: user.ID, NotepadID: Uint(30), Title: "Note 15", Text: "Hello"},
+			{ID: 10, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"},
+			{ID: 15, UserID: user.ID, NotepadID: 30, Title: "Note 15", Text: "Hello"},
 		}
 
 		repoMock := NewMockRepo(ctrl)
@@ -112,7 +112,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		note := Note{ID: id, UserID: user.ID, NotepadID: Uint(30), Title: "Note 10", Text: "Hello"}
+		note := Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Create(note).Return(note, nil)
@@ -159,7 +159,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		note := Note{ID: id, UserID: user.ID, NotepadID: Uint(30), Title: "Note 10", Text: "Hello"}
+		note := Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Update(note).Return(Note{}, fmt.Errorf("error"))
@@ -190,7 +190,7 @@ func TestController(t *testing.T) {
 
 		id := uint(10)
 		notes := []Note{
-			{ID: id, UserID: user.ID, NotepadID: Uint(30), Title: "Note 10", Text: "Hello"},
+			{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"},
 		}
 
 		repoMock := NewMockRepo(ctrl)
@@ -266,7 +266,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		note := Note{ID: id, UserID: user.ID, NotepadID: Uint(30), Title: "Note 10", Text: "Hello"}
+		note := Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Update(note).Return(note, nil)
@@ -314,7 +314,7 @@ func TestController(t *testing.T) {
 		defer ctrl.Finish()
 
 		id := uint(10)
-		note := Note{ID: id, UserID: user.ID, NotepadID: Uint(30), Title: "Note 10", Text: "Hello"}
+		note := Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := NewMockRepo(ctrl)
 		repoMock.EXPECT().Update(note).Return(Note{}, fmt.Errorf("error"))
