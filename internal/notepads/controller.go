@@ -83,6 +83,14 @@ func (c *Controller) Create(w http.ResponseWriter, req *http.Request) {
 	}
 	n.UserID = user.ID
 
+	if err = n.Validate(); err != nil {
+		response.New().
+			WithStatus(http.StatusBadRequest).
+			WithError(fmt.Errorf("Invalid notepad: %v", err)).
+			Write(w)
+		return
+	}
+
 	n, err = c.repo.Create(n)
 	if err != nil {
 		c.log.Errorf("Failed to create notepad: %v", err)
@@ -115,6 +123,14 @@ func (c *Controller) Update(w http.ResponseWriter, req *http.Request) {
 	}
 	n.ID = id
 	n.UserID = user.ID
+
+	if err = n.Validate(); err != nil {
+		response.New().
+			WithStatus(http.StatusBadRequest).
+			WithError(fmt.Errorf("Invalid notepad: %v", err)).
+			Write(w)
+		return
+	}
 
 	n, err = c.repo.Update(n)
 	if err == errors.ErrNotFound {

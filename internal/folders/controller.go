@@ -57,6 +57,14 @@ func (c *Controller) Create(w http.ResponseWriter, req *http.Request) {
 	}
 	f.UserID = user.ID
 
+	if err = f.Validate(); err != nil {
+		response.New().
+			WithStatus(http.StatusBadRequest).
+			WithError(fmt.Errorf("Invalid folder: %v", err)).
+			Write(w)
+		return
+	}
+
 	f, err = c.repo.Create(f)
 	if err != nil {
 		c.log.Errorf("Failed to create folder: %v", err)
@@ -116,6 +124,14 @@ func (c *Controller) Update(w http.ResponseWriter, req *http.Request) {
 	}
 	f.ID = id
 	f.UserID = user.ID
+
+	if err = f.Validate(); err != nil {
+		response.New().
+			WithStatus(http.StatusBadRequest).
+			WithError(fmt.Errorf("Invalid folder: %v", err)).
+			Write(w)
+		return
+	}
 
 	f, err = c.repo.Update(f)
 	if err == errors.ErrNotFound {

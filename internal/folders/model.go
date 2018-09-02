@@ -1,6 +1,9 @@
 package folders
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Folder represents a folder that contains notepads.
 type Folder struct {
@@ -12,4 +15,15 @@ type Folder struct {
 	// Managed by gorm callbacks
 	CreatedAt time.Time  `json:"-" gorm:"column:created_at"`
 	UpdatedAt *time.Time `json:"-" gorm:"column:updated_at"`
+}
+
+// Validate validates folder.
+func (f Folder) Validate() error {
+	if f.UserID == 0 {
+		return fmt.Errorf("unknown user")
+	}
+	if f.Title == "" {
+		return fmt.Errorf("title cannot be empty")
+	}
+	return nil
 }

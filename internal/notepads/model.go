@@ -1,6 +1,9 @@
 package notepads
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Notepad represents a notepad that contains notes.
 type Notepad struct {
@@ -12,4 +15,18 @@ type Notepad struct {
 	// Managed by gorm callbacks
 	CreatedAt time.Time  `json:"-" gorm:"column:created_at"`
 	UpdatedAt *time.Time `json:"-" gorm:"column:updated_at"`
+}
+
+// Validate validates notepad.
+func (n Notepad) Validate() error {
+	if n.UserID == 0 {
+		return fmt.Errorf("unknown user")
+	}
+	if n.FolderID == 0 {
+		return fmt.Errorf("folder id cannot be empty")
+	}
+	if n.Title == "" {
+		return fmt.Errorf("title cannot be empty")
+	}
+	return nil
 }
