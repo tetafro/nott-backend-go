@@ -62,7 +62,7 @@ func TestController(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to close response body: %v", err)
 		}
-		testutils.AssertResponse(t, string(body), `{
+		testutils.AssertJSON(t, string(body), `{
 			"data": [
 				{
 					"id": 10,
@@ -143,7 +143,7 @@ func TestController(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to close response body: %v", err)
 		}
-		testutils.AssertResponse(t, string(body), `{
+		testutils.AssertJSON(t, string(body), `{
 			"data": {
 				"id": 10,
 				"user_id": 1,
@@ -221,7 +221,7 @@ func TestController(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to close response body: %v", err)
 		}
-		testutils.AssertResponse(t, string(body), `{
+		testutils.AssertJSON(t, string(body), `{
 			"data": {
 				"id": 10,
 				"user_id": 1,
@@ -298,7 +298,7 @@ func TestController(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Failed to close response body: %v", err)
 		}
-		testutils.AssertResponse(t, string(body), `{
+		testutils.AssertJSON(t, string(body), `{
 			"data": {
 				"id": 10,
 				"user_id": 1,
