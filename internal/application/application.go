@@ -106,6 +106,6 @@ func (app *Application) Run() error {
 }
 
 func healthz(w http.ResponseWriter, r *http.Request) {
-	// nolint: errcheck
+	// nolint: errcheck,gosec
 	w.Write([]byte("Ok"))
 }
