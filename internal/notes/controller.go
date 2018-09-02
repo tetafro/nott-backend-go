@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/russross/blackfriday"
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
@@ -78,10 +77,10 @@ func (c *Controller) GetOne(w http.ResponseWriter, req *http.Request) {
 		response.NotFound().Write(w)
 		return
 	}
+	n := notes[0]
 
 	// Render markdown to HTML
-	n := notes[0]
-	n.HTML = string(blackfriday.Run([]byte(n.Text)))
+	n.HTML = render(n.Text)
 
 	response.New().
 		WithStatus(http.StatusOK).

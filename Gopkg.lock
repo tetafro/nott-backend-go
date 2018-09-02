@@ -2,6 +2,71 @@
 
 
 [[projects]]
+  digest = "1:16500dba440f014310f65d6c775f3a5f62aed67289a2e3ffe7afdf97f5ba8da3"
+  name = "github.com/Depado/bfchroma"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ab1c9aadb8f293e2de3df96dd5df09cccaf21dcd"
+  version = "v1.1.1"
+
+[[projects]]
+  digest = "1:c8ecb1984606eb58419ab440aff4ee5b7ce3b42a1677b5c7d32a3c6864f79e43"
+  name = "github.com/alecthomas/chroma"
+  packages = [
+    ".",
+    "formatters/html",
+    "lexers",
+    "lexers/a",
+    "lexers/b",
+    "lexers/c",
+    "lexers/d",
+    "lexers/e",
+    "lexers/f",
+    "lexers/g",
+    "lexers/h",
+    "lexers/i",
+    "lexers/internal",
+    "lexers/j",
+    "lexers/k",
+    "lexers/l",
+    "lexers/m",
+    "lexers/n",
+    "lexers/o",
+    "lexers/p",
+    "lexers/q",
+    "lexers/r",
+    "lexers/s",
+    "lexers/t",
+    "lexers/v",
+    "lexers/w",
+    "lexers/x",
+    "lexers/y",
+    "styles",
+  ]
+  pruneopts = "UT"
+  revision = "3020e2ea8c6b1a9c2336022d847c4392c3997f02"
+  version = "v0.4.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:710109527a119c813d4fac773712dd92f449ed7c2f7b81f49822f94d290c8f72"
+  name = "github.com/danwakefield/fnmatch"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cbb64ac3d964b81592e64f957ad53df015803288"
+
+[[projects]]
+  digest = "1:72dc2b6056e7097f829260e4a2ff08d32fec6017df1982a66e110ab4128486f8"
+  name = "github.com/dlclark/regexp2"
+  packages = [
+    ".",
+    "syntax",
+  ]
+  pruneopts = "UT"
+  revision = "487489b64fb796de2e55f4e8a4ad1e145f80e957"
+  version = "v1.1.6"
+
+[[projects]]
   digest = "1:4eda9f7bf70f5145b3b9ed3f18ac93e9b1a0e38906eb69e526380c34861e2b07"
   name = "github.com/go-chi/chi"
   packages = [
@@ -74,14 +139,6 @@
   revision = "d34b9ff171c21ad295489235aec8b6626023cd04"
 
 [[projects]]
-  digest = "1:39c2113f3a89585666e6f973650cff186b2d06deb4aa202c88addb87b0a201db"
-  name = "github.com/russross/blackfriday"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "cadec560ec52d93835bf2f15bd794700d3a2473b"
-  version = "v2.0.0"
-
-[[projects]]
   branch = "master"
   digest = "1:def689e73e9252f6f7fe66834a76751a41b767e03daab299e607e7226c58a855"
   name = "github.com/shurcooL/sanitized_anchor_name"
@@ -128,10 +185,19 @@
   pruneopts = "UT"
   revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
 
+[[projects]]
+  digest = "1:39c2113f3a89585666e6f973650cff186b2d06deb4aa202c88addb87b0a201db"
+  name = "gopkg.in/russross/blackfriday.v2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cadec560ec52d93835bf2f15bd794700d3a2473b"
+  version = "v2.0.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/Depado/bfchroma",
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
     "github.com/golang-migrate/migrate",
@@ -141,9 +207,9 @@
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
     "github.com/kelseyhightower/envconfig",
-    "github.com/russross/blackfriday",
     "github.com/sirupsen/logrus",
     "golang.org/x/crypto/bcrypt",
+    "gopkg.in/russross/blackfriday.v2",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

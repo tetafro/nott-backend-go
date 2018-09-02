@@ -27,8 +27,12 @@
   version = "1.1.1"
 
 [[constraint]]
-  name = "github.com/russross/blackfriday"
+  name = "gopkg.in/russross/blackfriday.v2"
   version = "2.0.0"
+
+[[constraint]]
+  name = "github.com/Depado/bfchroma"
+  version = "1.1.1"
 
 [[constraint]]
   name = "github.com/golang-migrate/migrate"
