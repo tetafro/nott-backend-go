@@ -2,8 +2,11 @@ package auth
 
 import (
 	"fmt"
+	"regexp"
 	"time"
 )
+
+var regexpEmail = regexp.MustCompile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+`)
 
 // User represents a user that used for authenticating.
 type User struct {
@@ -20,6 +23,9 @@ type User struct {
 func (u User) Validate() error {
 	if u.Email == "" {
 		return fmt.Errorf("email cannot be empty")
+	}
+	if !regexpEmail.MatchString(u.Email) {
+		return fmt.Errorf("invalid email format")
 	}
 	return nil
 }
