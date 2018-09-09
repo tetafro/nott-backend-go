@@ -53,7 +53,9 @@ func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error)
 	r.Method(http.MethodPost, "/logout",
 		http.HandlerFunc(usersController.Logout))
 	r.Method(http.MethodGet, "/profile",
-		mwAuth(http.HandlerFunc(usersController.Profile)))
+		mwAuth(http.HandlerFunc(usersController.GetProfile)))
+	r.Method(http.MethodPut, "/profile",
+		mwAuth(http.HandlerFunc(usersController.UpdateProfile)))
 	// Folders
 	r.Method(http.MethodGet, "/folders",
 		mwAuth(http.HandlerFunc(foldersController.GetList)))

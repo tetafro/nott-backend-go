@@ -1,6 +1,9 @@
 package auth
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // User represents a user that used for authenticating.
 type User struct {
@@ -11,4 +14,12 @@ type User struct {
 	// Managed by gorm callbacks
 	CreatedAt time.Time  `json:"-" gorm:"column:created_at"`
 	UpdatedAt *time.Time `json:"-" gorm:"column:updated_at"`
+}
+
+// Validate validates user.
+func (u User) Validate() error {
+	if u.Email == "" {
+		return fmt.Errorf("email cannot be empty")
+	}
+	return nil
 }

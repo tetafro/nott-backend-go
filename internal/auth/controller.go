@@ -7,6 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"github.com/tetafro/nott-backend-go/internal/errors"
 	"github.com/tetafro/nott-backend-go/internal/http/request"
 	"github.com/tetafro/nott-backend-go/internal/http/response"
 )
@@ -84,12 +85,62 @@ func (c *Controller) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/", http.StatusTemporaryRedirect)
 }
 
-// Profile handles request for getting current logged in user.
-func (c *Controller) Profile(w http.ResponseWriter, req *http.Request) {
+// GetProfile handles request for getting current logged in user.
+func (c *Controller) GetProfile(w http.ResponseWriter, req *http.Request) {
 	user := GetUser(req)
 	response.New().
 		WithStatus(http.StatusOK).
 		WithData(user).
+		Write(w)
+}
+
+// UpdateProfile handles request for getting current logged in user.
+func (c *Controller) UpdateProfile(w http.ResponseWriter, req *http.Request) {
+	user := GetUser(req)
+
+	var err error
+
+	u := User{}
+	if err = json.NewDecoder(req.Body).Decode(&u); err != nil {
+		response.New().
+			WithStatus(http.StatusBadRequest).
+			WithError(fmt.Errorf("Invalid JSON")).
+			Write(w)
+		return
+	}
+
+	if err = u.Validate(); err != nil {
+		response.New().
+			WithStatus(http.StatusBadRequest).
+			WithError(fmt.Errorf("Invalid user: %v", err)).
+			Write(w)
+		return
+	}
+
+	// Get all available fields
+	var modified bool
+	if user.Email != u.Email {
+		user.Email = u.Email
+		modified = true
+	}
+
+	// Save model if there was any changes
+	if modified {
+		u, err = c.users.Update(*user)
+		if err == errors.ErrNotFound {
+			response.NotFound().Write(w)
+			return
+		}
+		if err != nil {
+			c.log.Errorf("Failed to update user: %v", err)
+			response.InternalServerError().Write(w)
+			return
+		}
+	}
+
+	response.New().
+		WithStatus(http.StatusOK).
+		WithData(u).
 		Write(w)
 }
 

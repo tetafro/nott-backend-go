@@ -91,6 +91,31 @@ paths:
               - data
         "500":
           $ref: "#/responses/InternalServerError"
+    put:
+      description: Update user profile.
+      parameters:
+        - name: payload
+          description: Update folder request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: Updated user profile.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/User"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
   /folders:
     get:
       description: Get list of folders for currently logged in user.
