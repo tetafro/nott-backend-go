@@ -138,7 +138,7 @@ func TestController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		user := User{Email: "bob@example.com"}
+		user := User{ID: 10, Email: "bob@example.com"}
 
 		userRepoMock := NewMockUsersRepo(ctrl)
 		userRepoMock.EXPECT().Update(user).Return(user, nil)
@@ -154,7 +154,7 @@ func TestController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPut, url, bytes.NewBuffer(payload))
-		req = AddUser(req, User{Email: "alice@example.com"})
+		req = AddUser(req, User{ID: 10, Email: "alice@example.com"})
 
 		c.UpdateProfile(w, req)
 
@@ -173,6 +173,7 @@ func TestController(t *testing.T) {
 		}
 		testutils.AssertJSON(t, string(body), `{
 			"data": {
+				"id": 10,
 				"email": "bob@example.com"
 			}
 		}`)
