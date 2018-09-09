@@ -76,6 +76,21 @@ paths:
           $ref: "#/responses/BadRequest"
         "500":
           $ref: "#/responses/InternalServerError"
+  /profile:
+    get:
+      description: Get user profile.
+      responses:
+        "200":
+          description: Currently logged in user.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/User"
+            required:
+              - data
+        "500":
+          $ref: "#/responses/InternalServerError"
   /folders:
     get:
       description: Get list of folders for currently logged in user.
@@ -379,6 +394,14 @@ paths:
         format: int64
 
 definitions:
+  User:
+    description: User profile.
+    type: object
+    properties:
+      email:
+        description: Email address.
+        type: string
+        example: user@example.com
   Token:
     description: Authentication token.
     type: object
