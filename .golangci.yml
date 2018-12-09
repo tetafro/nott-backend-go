@@ -17,10 +17,8 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - interfacer
     - lll
     - maligned
-    - megacheck
     - misspell
     - nakedret
     - prealloc
@@ -31,5 +29,3 @@ linters:
     - unparam
     - unused
     - varcheck
-  disable:
-    - dupl
