@@ -1,6 +1,8 @@
 # Nott
 
 [![CircleCI](https://circleci.com/gh/tetafro/nott-backend-go.svg?style=shield)](https://circleci.com/gh/tetafro/nott-backend-go)
+[![Codecov](https://codecov.io/gh/tetafro/nott-backend-go/branch/master/graph/badge.svg)](https://codecov.io/gh/tetafro/nott-backend-go)
+[![Go Report](https://goreportcard.com/badge/github.com/tetafro/nott-backend-go)](https://goreportcard.com/report/github.com/tetafro/nott-backend-go)
 
 Markdown notes service with code syntax highlighting.
 

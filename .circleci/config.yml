@@ -32,6 +32,15 @@ jobs:
       - run:
           name: Run linters
           command: golangci-lint run
+  codecov:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/tetafro/nott-backend-go
+    steps:
+      - attach_workspace:
+          at: /go/src/github.com/tetafro
+      - run: ./.circleci/codecov.sh
+      - run: bash <(curl -s https://codecov.io/bash)
   publish:
     docker:
       - image: circleci/golang:1.10
@@ -57,6 +66,10 @@ workflows:
       - test:
           requires:
             - dep
+      - codecov:
+          requires:
+            - dep
+            - test
       - publish:
           requires:
             - dep
