@@ -9,25 +9,9 @@ dep:
 .PHONY: mock
 mock:
 	@ mockgen \
-		-source=internal/auth/tokens_repo.go \
-		-destination=internal/auth/tokens_repo_mock.go \
-		-package=auth
-	@ mockgen \
-		-source=internal/auth/users_repo.go \
-		-destination=internal/auth/users_repo_mock.go \
-		-package=auth
-	@ mockgen \
-		-source=internal/folders/repo.go \
-		-destination=internal/folders/repo_mock.go \
-		-package=folders
-	@ mockgen \
-		-source=internal/notepads/repo.go \
-		-destination=internal/notepads/repo_mock.go \
-		-package=notepads
-	@ mockgen \
-		-source=internal/notes/repo.go \
-		-destination=internal/notes/repo_mock.go \
-		-package=notes
+		-source=internal/storage/repositories.go \
+		-destination=internal/storage/repositories_mock.go \
+		-package=storage
 
 .PHONY: lint
 lint:

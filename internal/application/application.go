@@ -9,10 +9,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 
-	"github.com/tetafro/nott-backend-go/internal/auth"
-	"github.com/tetafro/nott-backend-go/internal/folders"
-	"github.com/tetafro/nott-backend-go/internal/notepads"
-	"github.com/tetafro/nott-backend-go/internal/notes"
+	"github.com/tetafro/nott-backend-go/internal/storage/postgres"
+	httpapi "github.com/tetafro/nott-backend-go/internal/transport/http"
 )
 
 const version = "v1"
@@ -28,34 +26,34 @@ type Application struct {
 func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error) {
 	app := &Application{addr: addr, log: log}
 
-	foldersRepo := folders.NewPostgresRepo(db)
-	foldersController := folders.NewController(foldersRepo, log)
+	foldersRepo := postgres.NewFoldersRepo(db)
+	foldersController := httpapi.NewFoldersController(foldersRepo, log)
 
-	notepadsRepo := notepads.NewPostgresRepo(db)
-	notepadsController := notepads.NewController(notepadsRepo, log)
+	notepadsRepo := postgres.NewNotepadsRepo(db)
+	notepadsController := httpapi.NewNotepadsController(notepadsRepo, log)
 
-	notesRepo := notes.NewPostgresRepo(db)
-	notesController := notes.NewController(notesRepo, log)
+	notesRepo := postgres.NewNotesRepo(db)
+	notesController := httpapi.NewNotesController(notesRepo, log)
 
-	usersRepo := auth.NewUsersPostgresRepo(db)
+	usersRepo := postgres.NewUsersRepo(db)
 
-	tokensRepo := auth.NewTokensPostgresRepo(db)
+	tokensRepo := postgres.NewTokensRepo(db)
 
-	usersController := auth.NewController(usersRepo, tokensRepo, log)
+	authController := httpapi.NewAuthController(usersRepo, tokensRepo, log)
 
-	mwAuth := auth.NewAuthMiddleware(usersRepo, log)
+	mwAuth := httpapi.NewAuthMiddleware(usersRepo, log)
 	mwLog := middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: log})
 
 	r := chi.NewRouter()
 	// Auth
 	r.Method(http.MethodPost, "/login",
-		http.HandlerFunc(usersController.Login))
+		http.HandlerFunc(authController.Login))
 	r.Method(http.MethodPost, "/logout",
-		http.HandlerFunc(usersController.Logout))
+		http.HandlerFunc(authController.Logout))
 	r.Method(http.MethodGet, "/profile",
-		mwAuth(http.HandlerFunc(usersController.GetProfile)))
+		mwAuth(http.HandlerFunc(authController.GetProfile)))
 	r.Method(http.MethodPut, "/profile",
-		mwAuth(http.HandlerFunc(usersController.UpdateProfile)))
+		mwAuth(http.HandlerFunc(authController.UpdateProfile)))
 	// Folders
 	r.Method(http.MethodGet, "/folders",
 		mwAuth(http.HandlerFunc(foldersController.GetList)))

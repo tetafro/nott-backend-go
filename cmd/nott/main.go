@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/application"
-	"github.com/tetafro/nott-backend-go/internal/database"
+	"github.com/tetafro/nott-backend-go/internal/storage/postgres"
 )
 
 func main() {
@@ -14,20 +14,20 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("Configuration error: %v", err))
 	}
-	log := initLogger(cfg.Debug)
+	log := initLogger(cfg.Development)
 
 	log.Info("Connecting to database...")
 	conn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?%s",
 		cfg.PGUsername, cfg.PGPassword,
 		cfg.PGHost, cfg.PGPort,
 		cfg.PGDatabase, cfg.PGParams)
-	db, err := database.Connect(conn, log, cfg.Debug)
+	db, err := postgres.Connect(conn, log, cfg.Development)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
 	log.Info("Applying migrations...")
-	if err = database.Migrate(db, cfg.PGMigrations); err != nil {
+	if err = postgres.Migrate(db, cfg.PGMigrations); err != nil {
 		log.Fatalf("Migration process failed: %v", err)
 	}
 

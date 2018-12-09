@@ -1,8 +1,12 @@
 package auth
 
-import "testing"
+import (
+	"testing"
 
-func TestValidation(t *testing.T) {
+	"github.com/stretchr/testify/assert"
+)
+
+func TestUserValidation(t *testing.T) {
 	cases := []struct {
 		title string
 		user  User
@@ -52,11 +56,10 @@ func TestValidation(t *testing.T) {
 	for _, tt := range cases {
 		t.Run(tt.title, func(t *testing.T) {
 			err := tt.user.Validate()
-			if tt.err && err == nil {
-				t.Fatal("Wanted error, got nil")
-			}
-			if !tt.err && err != nil {
-				t.Fatalf("Unexpected error: %v", err)
+			if tt.err {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
 			}
 		})
 	}
