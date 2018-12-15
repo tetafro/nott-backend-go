@@ -13,8 +13,6 @@ import (
 	httpapi "github.com/tetafro/nott-backend-go/internal/transport/http"
 )
 
-const version = "v1"
-
 // Application is an entity that gets things done.
 type Application struct {
 	addr   string
@@ -44,56 +42,40 @@ func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error)
 	mwAuth := httpapi.NewAuthMiddleware(usersRepo, log)
 	mwLog := middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: log})
 
+	// Auth router
+	ra := chi.NewRouter()
+	ra.MethodFunc(http.MethodPost, "/register", authController.Register)
+	ra.MethodFunc(http.MethodPost, "/login", authController.Login)
+	ra.MethodFunc(http.MethodPost, "/logout", authController.Logout)
+
+	// Application router
 	r := chi.NewRouter()
-	// Auth
-	r.Method(http.MethodPost, "/register",
-		http.HandlerFunc(authController.Register))
-	r.Method(http.MethodPost, "/login",
-		http.HandlerFunc(authController.Login))
-	r.Method(http.MethodPost, "/logout",
-		http.HandlerFunc(authController.Logout))
-	r.Method(http.MethodGet, "/profile",
-		mwAuth(http.HandlerFunc(authController.GetProfile)))
-	r.Method(http.MethodPut, "/profile",
-		mwAuth(http.HandlerFunc(authController.UpdateProfile)))
+	// Users
+	r.MethodFunc(http.MethodGet, "/profile", authController.GetProfile)
+	r.MethodFunc(http.MethodPut, "/profile", authController.UpdateProfile)
 	// Folders
-	r.Method(http.MethodGet, "/folders",
-		mwAuth(http.HandlerFunc(foldersController.GetList)))
-	r.Method(http.MethodPost, "/folders",
-		mwAuth(http.HandlerFunc(foldersController.Create)))
-	r.Method(http.MethodGet, "/folders/{id}",
-		mwAuth(http.HandlerFunc(foldersController.GetOne)))
-	r.Method(http.MethodPut, "/folders/{id}",
-		mwAuth(http.HandlerFunc(foldersController.Update)))
-	r.Method(http.MethodDelete, "/folders/{id}",
-		mwAuth(http.HandlerFunc(foldersController.Delete)))
+	r.MethodFunc(http.MethodGet, "/folders", foldersController.GetList)
+	r.MethodFunc(http.MethodPost, "/folders", foldersController.Create)
+	r.MethodFunc(http.MethodGet, "/folders/{id}", foldersController.GetOne)
+	r.MethodFunc(http.MethodPut, "/folders/{id}", foldersController.Update)
+	r.MethodFunc(http.MethodDelete, "/folders/{id}", foldersController.Delete)
 	// Notepads
-	r.Method(http.MethodGet, "/notepads",
-		mwAuth(http.HandlerFunc(notepadsController.GetList)))
-	r.Method(http.MethodPost, "/notepads",
-		mwAuth(http.HandlerFunc(notepadsController.Create)))
-	r.Method(http.MethodGet, "/notepads/{id}",
-		mwAuth(http.HandlerFunc(notepadsController.GetOne)))
-	r.Method(http.MethodPut, "/notepads/{id}",
-		mwAuth(http.HandlerFunc(notepadsController.Update)))
-	r.Method(http.MethodDelete, "/notepads/{id}",
-		mwAuth(http.HandlerFunc(notepadsController.Delete)))
+	r.MethodFunc(http.MethodGet, "/notepads", notepadsController.GetList)
+	r.MethodFunc(http.MethodPost, "/notepads", notepadsController.Create)
+	r.MethodFunc(http.MethodGet, "/notepads/{id}", notepadsController.GetOne)
+	r.MethodFunc(http.MethodPut, "/notepads/{id}", notepadsController.Update)
+	r.MethodFunc(http.MethodDelete, "/notepads/{id}", notepadsController.Delete)
 	// Notes
-	r.Method(http.MethodGet, "/notes",
-		mwAuth(http.HandlerFunc(notesController.GetList)))
-	r.Method(http.MethodPost, "/notes",
-		mwAuth(http.HandlerFunc(notesController.Create)))
-	r.Method(http.MethodGet, "/notes/{id}",
-		mwAuth(http.HandlerFunc(notesController.GetOne)))
-	r.Method(http.MethodPut, "/notes/{id}",
-		mwAuth(http.HandlerFunc(notesController.Update)))
-	r.Method(http.MethodDelete, "/notes/{id}",
-		mwAuth(http.HandlerFunc(notesController.Delete)))
+	r.MethodFunc(http.MethodGet, "/notes", notesController.GetList)
+	r.MethodFunc(http.MethodPost, "/notes", notesController.Create)
+	r.MethodFunc(http.MethodGet, "/notes/{id}", notesController.GetOne)
+	r.MethodFunc(http.MethodPut, "/notes/{id}", notesController.Update)
+	r.MethodFunc(http.MethodDelete, "/notes/{id}", notesController.Delete)
 
 	app.router = chi.NewRouter()
-	app.router.Method(http.MethodGet, "/healthz",
-		http.HandlerFunc(healthz))
-	app.router.Mount("/api/"+version, mwLog(r))
+	app.router.MethodFunc(http.MethodGet, "/healthz", healthz)
+	app.router.Mount("/api/v1/auth", mwLog(ra))
+	app.router.Mount("/api/v1", mwLog(mwAuth(r)))
 
 	return app, nil
 }
