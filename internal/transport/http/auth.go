@@ -47,7 +47,30 @@ func (c *AuthController) Register(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	respond(w, http.StatusOK, nil)
+	// Create user in the repository
+	u := auth.User{Email: body.Email}
+	u.Password, err = auth.HashPassword(body.Password)
+	if err != nil {
+		c.log.Errorf("Failed to hash password: %v", err)
+		internalServerError(w)
+		return
+	}
+	u, err = c.users.Create(u)
+	if err != nil {
+		c.log.Errorf("Failed to create user: %v", err)
+		internalServerError(w)
+		return
+	}
+
+	// Generate token
+	t, err := c.tokens.Create(auth.Token{UserID: u.ID})
+	if err != nil {
+		c.log.Errorf("Failed to create token: %v", err)
+		internalServerError(w)
+		return
+	}
+
+	respond(w, http.StatusOK, t)
 }
 
 // Login handles request for logging in using email+password.
@@ -75,6 +98,7 @@ func (c *AuthController) Login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Generate token
 	t, err := c.tokens.Create(auth.Token{UserID: user.ID})
 	if err != nil {
 		c.log.Errorf("Failed to create token: %v", err)

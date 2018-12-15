@@ -52,6 +52,16 @@ func (r *UsersRepo) GetByToken(token string) (auth.User, error) {
 	return u, nil
 }
 
+// Create creates user in repository.
+func (r *UsersRepo) Create(u auth.User) (auth.User, error) {
+	q := r.db.Create(&u)
+	if err := q.Error; err != nil {
+		return auth.User{}, fmt.Errorf("query failed with error: %v", err)
+	}
+	q.Scan(&u.ID)
+	return u, nil
+}
+
 // Update updates user in repository.
 func (r *UsersRepo) Update(u auth.User) (auth.User, error) {
 	err := transact(r.db, func(tx *gorm.DB) (err error) {

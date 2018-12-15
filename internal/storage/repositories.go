@@ -9,6 +9,7 @@ import (
 type UsersRepo interface {
 	GetByEmail(email string) (auth.User, error)
 	GetByToken(token string) (auth.User, error)
+	Create(auth.User) (auth.User, error)
 	Update(auth.User) (auth.User, error)
 }
 

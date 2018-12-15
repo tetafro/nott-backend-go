@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
+	"github.com/tetafro/nott-backend-go/internal/domain"
 	"github.com/tetafro/nott-backend-go/internal/storage"
 )
 
@@ -25,6 +26,47 @@ func TestAuthController(t *testing.T) {
 	hash := "$2a$14$EsnwEn3C6cxQUWXvUpJ6S.XsJSku11hTSULXn8NEIG1diGcGEgrii"
 	user := auth.User{ID: 1, Email: "bob@example.com", Password: hash}
 	token := auth.Token{ID: 10, UserID: user.ID, String: "qwerty123", TTL: 10}
+
+	t.Run("Succesful registration", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usersRepoMock := storage.NewMockUsersRepo(ctrl)
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, domain.ErrNotFound)
+		usersRepoMock.EXPECT().Create(gomock.Any()).Return(user, nil)
+
+		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokensRepoMock.EXPECT().Create(
+			auth.Token{UserID: token.UserID},
+		).Return(token, nil)
+
+		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
+		assert.NoError(t, err)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+
+		c.Register(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusOK)
+
+		body, err := ioutil.ReadAll(resp.Body)
+		assert.NoError(t, err)
+
+		err = resp.Body.Close()
+		assert.NoError(t, err)
+
+		assert.JSONEq(t, string(body), `{
+			"data": {
+				"string": "qwerty123",
+				"ttl": 10
+			}
+		}`)
+	})
 
 	t.Run("Succesful login", func(t *testing.T) {
 		ctrl := gomock.NewController(t)

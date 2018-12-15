@@ -60,6 +60,19 @@ func (mr *MockUsersRepoMockRecorder) GetByToken(token interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByToken", reflect.TypeOf((*MockUsersRepo)(nil).GetByToken), token)
 }
 
+// Create mocks base method
+func (m *MockUsersRepo) Create(arg0 auth.User) (auth.User, error) {
+	ret := m.ctrl.Call(m, "Create", arg0)
+	ret0, _ := ret[0].(auth.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create
+func (mr *MockUsersRepoMockRecorder) Create(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUsersRepo)(nil).Create), arg0)
+}
+
 // Update mocks base method
 func (m *MockUsersRepo) Update(arg0 auth.User) (auth.User, error) {
 	ret := m.ctrl.Call(m, "Update", arg0)
