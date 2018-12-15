@@ -46,6 +46,8 @@ func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error)
 
 	r := chi.NewRouter()
 	// Auth
+	r.Method(http.MethodPost, "/register",
+		http.HandlerFunc(authController.Register))
 	r.Method(http.MethodPost, "/login",
 		http.HandlerFunc(authController.Login))
 	r.Method(http.MethodPost, "/logout",

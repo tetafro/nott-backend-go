@@ -27,9 +27,32 @@ func NewAuthController(
 	return &AuthController{users: users, tokens: tokens, log: log}
 }
 
+// Register handles request for registering new users.
+func (c *AuthController) Register(w http.ResponseWriter, req *http.Request) {
+	var body authRequest
+	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
+		badRequest(w, "invalid json")
+		return
+	}
+	defer req.Body.Close()
+
+	_, err := c.users.GetByEmail(body.Email)
+	if err == nil {
+		badRequest(w, "email is already taken")
+		return
+	}
+	if err != domain.ErrNotFound {
+		c.log.Errorf("Failed to check user: %v", err)
+		internalServerError(w)
+		return
+	}
+
+	respond(w, http.StatusOK, nil)
+}
+
 // Login handles request for logging in using email+password.
 func (c *AuthController) Login(w http.ResponseWriter, req *http.Request) {
-	var body loginRequest
+	var body authRequest
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
 		badRequest(w, "invalid json")
 		return
@@ -48,7 +71,7 @@ func (c *AuthController) Login(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if !auth.CheckPassword(body.Password, user.Password) {
-		respond(w, http.StatusUnauthorized, "invalid email or password")
+		respond(w, http.StatusBadRequest, "invalid email or password")
 		return
 	}
 
@@ -123,7 +146,7 @@ func (c *AuthController) UpdateProfile(w http.ResponseWriter, req *http.Request)
 	respond(w, http.StatusOK, u)
 }
 
-type loginRequest struct {
+type authRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }

@@ -40,7 +40,7 @@ func TestAuthController(t *testing.T) {
 
 		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
 
-		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: password})
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
 
 		url := "/"
@@ -77,7 +77,7 @@ func TestAuthController(t *testing.T) {
 
 		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
 
-		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: password})
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
 
 		url := "/"
@@ -104,7 +104,7 @@ func TestAuthController(t *testing.T) {
 
 		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
 
-		payload, err := json.Marshal(loginRequest{Email: user.Email, Password: password})
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
 
 		url := "/"
