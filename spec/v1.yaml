@@ -76,6 +76,15 @@ paths:
           $ref: "#/responses/BadRequest"
         "500":
           $ref: "#/responses/InternalServerError"
+  /auth/logout:
+    post:
+      description: Sign out using current user.
+      responses:
+        "307":
+          description: Redirect to /.
+          $ref: "#/responses/TemporaryRedirect"
+        "500":
+          $ref: "#/responses/InternalServerError"
   /profile:
     get:
       description: Get user profile.
@@ -585,6 +594,8 @@ definitions:
 responses:
   NoContent:
     description: No content.
+  TemporaryRedirect:
+    description: Temporary redirect.
   BadRequest:
     description: Bad request.
     schema:
