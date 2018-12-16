@@ -10,7 +10,7 @@ info:
 basePath: /api/v1
 
 paths:
-  /register:
+  /auth/register:
     post:
       description: Register new user.
       parameters:
@@ -43,7 +43,7 @@ paths:
           $ref: "#/responses/BadRequest"
         "500":
           $ref: "#/responses/InternalServerError"
-  /login:
+  /auth/login:
     post:
       description: Sign in using existing user.
       parameters:
