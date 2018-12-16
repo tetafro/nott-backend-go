@@ -1,6 +1,9 @@
 package main
 
-import "github.com/kelseyhightower/envconfig"
+import (
+	_ "github.com/joho/godotenv/autoload" // load env vars from .env file
+	"github.com/kelseyhightower/envconfig"
+)
 
 // config represents application configuration.
 type config struct {
