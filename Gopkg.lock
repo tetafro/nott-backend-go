@@ -108,6 +108,14 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:97df918963298c287643883209a2c3f642e6593379f97ab400c2a2e219ab647d"
+  name = "github.com/golang/protobuf"
+  packages = ["proto"]
+  pruneopts = "UT"
+  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:6895fbe5a10c5aebd1965cac6f6905dcdb21bee01e08912d3ba6a805c2485f6a"
   name = "github.com/jinzhu/gorm"
   packages = [
@@ -203,11 +211,26 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:76ee51c3f468493aff39dbacc401e8831fbb765104cbf613b89bef01cf4bad70"
+  digest = "1:d6b719875cf8091fbab38527d81d34e71f4521b9ee9ccfbd4a32cff2ac5af96e"
   name = "golang.org/x/net"
-  packages = ["context"]
+  packages = [
+    "context",
+    "context/ctxhttp",
+  ]
   pruneopts = "UT"
   revision = "ed29d75add3d7c4bf7ca65aac0c6df3d1420216f"
+
+[[projects]]
+  branch = "master"
+  digest = "1:932aea8a7acd301484058f913d4b209bc8c9dc64ea99fd3fbbb2f75c02e3cd46"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "github",
+    "internal",
+  ]
+  pruneopts = "UT"
+  revision = "d668ce993890a79bda886613ee587a69dd5da7a6"
 
 [[projects]]
   branch = "master"
@@ -219,6 +242,22 @@
   ]
   pruneopts = "UT"
   revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
+
+[[projects]]
+  digest = "1:6f3bd49ddf2e104e52062774d797714371fac1b8bddfd8e124ce78e6b2264a10"
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch",
+  ]
+  pruneopts = "UT"
+  revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
+  version = "v1.4.0"
 
 [[projects]]
   digest = "1:39c2113f3a89585666e6f973650cff186b2d06deb4aa202c88addb87b0a201db"
@@ -246,6 +285,8 @@
     "github.com/sirupsen/logrus",
     "github.com/stretchr/testify/assert",
     "golang.org/x/crypto/bcrypt",
+    "golang.org/x/oauth2",
+    "golang.org/x/oauth2/github",
     "gopkg.in/russross/blackfriday.v2",
   ]
   solver-name = "gps-cdcl"

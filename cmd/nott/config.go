@@ -10,6 +10,8 @@ type config struct {
 	// Development mode enables dev-only features
 	Development bool `envconfig:"DEVELOPMENT" default:"false"`
 
+	// External host of the current server (proto://host:port)
+	Host string `envconfig:"HOST" required:"true"`
 
 	// Port to listen on
 	Port int `envconfig:"PORT" default:"8080"`
@@ -22,6 +24,10 @@ type config struct {
 	PGUsername   string `envconfig:"POSTGRES_USERNAME" required:"true"`
 	PGPassword   string `envconfig:"POSTGRES_PASSWORD" required:"true"`
 	PGMigrations string `envconfig:"POSTGRES_MIGRATIONS" required:"true"`
+
+	// OAuth: GitHub
+	GithubClientID     string `envconfig:"GITHUB_CLIENT_ID" required:"true"`
+	GithubClientSecret string `envconfig:"GITHUB_CLIENT_SECRET" required:"true"`
 }
 
 func readConfig() (*config, error) {

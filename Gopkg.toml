@@ -7,6 +7,10 @@
   name = "golang.org/x/crypto"
 
 [[constraint]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+
+[[constraint]]
   name = "github.com/Depado/bfchroma"
   version = "1.1.1"
 

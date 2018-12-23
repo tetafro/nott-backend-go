@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/application"
+	"github.com/tetafro/nott-backend-go/internal/auth"
 	"github.com/tetafro/nott-backend-go/internal/storage/postgres"
 )
 
@@ -31,8 +32,13 @@ func main() {
 		log.Fatalf("Migration process failed: %v", err)
 	}
 
+	// OAuth providers
+	providers := map[string]*auth.OAuthProvider{
+		"github": auth.NewGithubProvider(cfg.Host, cfg.GithubClientID, cfg.GithubClientSecret),
+	}
+
 	addr := fmt.Sprintf(":%d", cfg.Port)
-	app, err := application.New(db, addr, log)
+	app, err := application.New(db, addr, providers, log)
 	if err != nil {
 		log.Fatalf("Failed to init the application: %v", err)
 	}

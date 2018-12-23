@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 
+	"github.com/tetafro/nott-backend-go/internal/auth"
 	"github.com/tetafro/nott-backend-go/internal/storage/postgres"
 	httpapi "github.com/tetafro/nott-backend-go/internal/transport/http"
 )
@@ -21,7 +22,12 @@ type Application struct {
 }
 
 // New creates main application instance that handles all requests.
-func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error) {
+func New(
+	db *gorm.DB,
+	addr string,
+	providers map[string]*auth.OAuthProvider,
+	log logrus.FieldLogger,
+) (*Application, error) {
 	app := &Application{addr: addr, log: log}
 
 	foldersRepo := postgres.NewFoldersRepo(db)
@@ -34,22 +40,27 @@ func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error)
 	notesController := httpapi.NewNotesController(notesRepo, log)
 
 	usersRepo := postgres.NewUsersRepo(db)
-
 	tokensRepo := postgres.NewTokensRepo(db)
-
 	authController := httpapi.NewAuthController(usersRepo, tokensRepo, log)
+
+	oauthController := httpapi.NewOAuthController(providers, usersRepo, tokensRepo, log)
 
 	mwAuth := httpapi.NewAuthMiddleware(usersRepo, log)
 	mwLog := middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: log})
 
-	// Auth router
-	ra := chi.NewRouter()
-	ra.MethodFunc(http.MethodPost, "/register", authController.Register)
-	ra.MethodFunc(http.MethodPost, "/login", authController.Login)
-	ra.MethodFunc(http.MethodPost, "/logout", authController.Logout)
+	// Main router
+	app.router = chi.NewRouter()
+	app.router.Use(mwLog)
+	app.router.MethodFunc(http.MethodGet, "/healthz", healthz)
+	app.router.MethodFunc(http.MethodPost, "/api/v1/register", authController.Register)
+	app.router.MethodFunc(http.MethodPost, "/api/v1/login", authController.Login)
+	app.router.MethodFunc(http.MethodPost, "/api/v1/logout", authController.Logout)
+	app.router.MethodFunc(http.MethodGet, "/api/v1/oauth/providers", oauthController.Providers)
+	app.router.MethodFunc(http.MethodPost, "/api/v1/oauth/github", oauthController.Github)
 
 	// Application router
 	r := chi.NewRouter()
+	r.Use(mwAuth)
 	// Users
 	r.MethodFunc(http.MethodGet, "/profile", authController.GetProfile)
 	r.MethodFunc(http.MethodPut, "/profile", authController.UpdateProfile)
@@ -72,10 +83,7 @@ func New(db *gorm.DB, addr string, log logrus.FieldLogger) (*Application, error)
 	r.MethodFunc(http.MethodPut, "/notes/{id}", notesController.Update)
 	r.MethodFunc(http.MethodDelete, "/notes/{id}", notesController.Delete)
 
-	app.router = chi.NewRouter()
-	app.router.MethodFunc(http.MethodGet, "/healthz", healthz)
-	app.router.Mount("/api/v1/auth", mwLog(ra))
-	app.router.Mount("/api/v1", mwLog(mwAuth(r)))
+	app.router.Mount("/api/v1", r)
 
 	return app, nil
 }

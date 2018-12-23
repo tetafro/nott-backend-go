@@ -86,6 +86,52 @@ paths:
           $ref: "#/responses/Unauthorized"
         "500":
           $ref: "#/responses/InternalServerError"
+  /oauth/providers:
+    get:
+      description: Get list of available OAuth providers.
+      responses:
+        "200":
+          description: List of OAuth providers.
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/OAuthProvider"
+            required:
+              - data
+        "500":
+          $ref: "#/responses/InternalServerError"
+  /oauth/github:
+    post:
+      description: Github OAuth callback endpoint.
+      parameters:
+        - name: payload
+          description: Callback request.
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              code:
+                description: Github code.
+                type: string
+                example: 123abc123abc123abc12
+      responses:
+        "200":
+          description: Authentication token to proceed.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Token"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
   /profile:
     get:
       description: Get user profile.
@@ -486,6 +532,26 @@ definitions:
         readOnly: true
         minimum: 1
         example: 3600
+  OAuthProvider:
+    description: OAuth provider.
+    type: object
+    properties:
+      name:
+        description: Human readable name.
+        type: string
+        example: GitHub
+      base_url:
+        description: Base URL to send login requests.
+        type: string
+        example: https://github.com/login/oauth/authorize
+      query:
+        description: Query-encoded parameters for login request.
+        type: string
+        example: scope=user:email
+      client_id:
+        description: Query-encoded parameters for login request.
+        type: string
+        example: abcabcabc12312312312
   Folder:
     description: Folder. Contains notepads and other folders.
     type: object
