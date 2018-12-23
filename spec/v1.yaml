@@ -10,7 +10,7 @@ info:
 basePath: /api/v1
 
 paths:
-  /auth/register:
+  /register:
     post:
       description: Register new user.
       parameters:
@@ -43,7 +43,7 @@ paths:
           $ref: "#/responses/BadRequest"
         "500":
           $ref: "#/responses/InternalServerError"
-  /auth/login:
+  /login:
     post:
       description: Sign in using existing user.
       parameters:
@@ -63,7 +63,7 @@ paths:
                 type: string
                 example: qwerty
       responses:
-        "201":
+        "200":
           description: Authentication token to proceed.
           schema:
             type: object
@@ -76,12 +76,11 @@ paths:
           $ref: "#/responses/BadRequest"
         "500":
           $ref: "#/responses/InternalServerError"
-  /auth/logout:
+  /logout:
     post:
       description: Sign out using current user.
       responses:
         "307":
-          description: Redirect to /.
           $ref: "#/responses/TemporaryRedirect"
         "401":
           $ref: "#/responses/Unauthorized"
