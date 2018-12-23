@@ -8,7 +8,8 @@ import (
 // config represents application configuration.
 type config struct {
 	// Development mode enables dev-only features
-	Development bool `envconfig:"DEBUG" default:"false"`
+	Development bool `envconfig:"DEVELOPMENT" default:"false"`
+
 
 	// Port to listen on
 	Port int `envconfig:"PORT" default:"8080"`
