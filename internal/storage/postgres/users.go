@@ -58,7 +58,7 @@ func (r *UsersRepo) Create(u auth.User) (auth.User, error) {
 	if err := q.Error; err != nil {
 		return auth.User{}, fmt.Errorf("query failed with error: %v", err)
 	}
-	q.Scan(&u.ID)
+	q.Scan(&u)
 	return u, nil
 }
 
