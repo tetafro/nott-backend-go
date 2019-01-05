@@ -78,14 +78,18 @@ func (c *OAuthController) Github(w http.ResponseWriter, req *http.Request) {
 func (c *OAuthController) handleUser(email string) (auth.Token, error) {
 	// Get or create user
 	u, err := c.users.GetByEmail(email)
-	if err != nil && err != domain.ErrNotFound {
-		return auth.Token{}, fmt.Errorf("get user: %v", err)
-	}
-	if err == domain.ErrNotFound {
+	switch err {
+	case nil:
+		// Got existing user, proceed
+	case domain.ErrNotFound:
+		// Create new user
 		u, err = c.users.Create(auth.User{Email: email})
 		if err != nil {
 			return auth.Token{}, fmt.Errorf("create user: %v", err)
 		}
+	default:
+		// Unexpected error
+		return auth.Token{}, fmt.Errorf("get user: %v", err)
 	}
 
 	// Generate token

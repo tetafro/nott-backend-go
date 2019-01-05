@@ -68,6 +68,55 @@ func TestAuthController(t *testing.T) {
 		}`)
 	})
 
+	t.Run("Failed registration because user already exists", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usersRepoMock := storage.NewMockUsersRepo(ctrl)
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{ID: 1}, nil)
+
+		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+
+		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
+		assert.NoError(t, err)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+
+		c.Register(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
+	})
+
+	t.Run("Failed registration because of users repo error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usersRepoMock := storage.NewMockUsersRepo(ctrl)
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, domain.ErrNotFound)
+		usersRepoMock.EXPECT().Create(gomock.Any()).Return(auth.User{}, fmt.Errorf("error"))
+
+		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+
+		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
+		assert.NoError(t, err)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+
+		c.Register(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusInternalServerError)
+	})
+
 	t.Run("Succesful login", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()

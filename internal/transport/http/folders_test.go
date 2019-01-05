@@ -77,7 +77,7 @@ func TestFoldersController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to get folders", func(t *testing.T) {
+	t.Run("Fail to get folders", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -140,7 +140,7 @@ func TestFoldersController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to create folder", func(t *testing.T) {
+	t.Run("Fail to create folder", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -210,7 +210,32 @@ func TestFoldersController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to get folder by id", func(t *testing.T) {
+	t.Run("Fail to get folder by non-existing id", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		id := uint(10)
+
+		repoMock := storage.NewMockFoldersRepo(ctrl)
+		repoMock.EXPECT().Get(
+			storage.FoldersFilter{ID: &id, UserID: &user.ID},
+		).Return(nil, nil)
+
+		c := NewFoldersController(repoMock, log)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, url, nil)
+		req = addUser(req, user)
+		req = addID(req, id)
+
+		c.GetOne(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	})
+
+	t.Run("Fail to get folder by id", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -277,7 +302,7 @@ func TestFoldersController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to update folder", func(t *testing.T) {
+	t.Run("Fail to update folder", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -328,7 +353,7 @@ func TestFoldersController(t *testing.T) {
 		assert.Equal(t, resp.StatusCode, http.StatusNoContent)
 	})
 
-	t.Run("Failed to delete folder", func(t *testing.T) {
+	t.Run("Fail to delete folder", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 

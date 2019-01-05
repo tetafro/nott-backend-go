@@ -74,7 +74,7 @@ func TestNotepadsController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to get notepads", func(t *testing.T) {
+	t.Run("Fail to get notepads", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -137,7 +137,7 @@ func TestNotepadsController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to create notepad", func(t *testing.T) {
+	t.Run("Fail to create notepad", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -207,7 +207,7 @@ func TestNotepadsController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to get notepad by id", func(t *testing.T) {
+	t.Run("Fail to get notepad by id", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -230,6 +230,31 @@ func TestNotepadsController(t *testing.T) {
 
 		resp := w.Result()
 		assert.Equal(t, resp.StatusCode, http.StatusInternalServerError)
+	})
+
+	t.Run("Fail to get notepad by non-existing id", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		id := uint(10)
+
+		repoMock := storage.NewMockNotepadsRepo(ctrl)
+		repoMock.EXPECT().Get(
+			storage.NotepadsFilter{ID: &id, UserID: &user.ID},
+		).Return(nil, nil)
+
+		c := NewNotepadsController(repoMock, log)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, url, nil)
+		req = addUser(req, user)
+		req = addID(req, id)
+
+		c.GetOne(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusNotFound)
 	})
 
 	t.Run("Update notepad", func(t *testing.T) {
@@ -274,7 +299,7 @@ func TestNotepadsController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to update notepad", func(t *testing.T) {
+	t.Run("Fail to update notepad", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -325,7 +350,7 @@ func TestNotepadsController(t *testing.T) {
 		assert.Equal(t, resp.StatusCode, http.StatusNoContent)
 	})
 
-	t.Run("Failed to delete notepad", func(t *testing.T) {
+	t.Run("Fail to delete notepad", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 

@@ -79,7 +79,7 @@ func TestNotesNController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to get notes", func(t *testing.T) {
+	t.Run("Fail to get notes", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -143,7 +143,7 @@ func TestNotesNController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to create note", func(t *testing.T) {
+	t.Run("Fail to create note", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -215,7 +215,32 @@ func TestNotesNController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to get note by id", func(t *testing.T) {
+	t.Run("Fail to get note by non-existing id", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		id := uint(10)
+
+		repoMock := storage.NewMockNotesRepo(ctrl)
+		repoMock.EXPECT().Get(
+			storage.NotesFilter{ID: &id, UserID: &user.ID},
+		).Return(nil, nil)
+
+		c := NewNotesController(repoMock, log)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, url, nil)
+		req = addUser(req, user)
+		req = addID(req, id)
+
+		c.GetOne(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	})
+
+	t.Run("Fail to get note by id", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -283,7 +308,7 @@ func TestNotesNController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to update note", func(t *testing.T) {
+	t.Run("Fail to update note", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -334,7 +359,7 @@ func TestNotesNController(t *testing.T) {
 		assert.Equal(t, resp.StatusCode, http.StatusNoContent)
 	})
 
-	t.Run("Failed to delete note", func(t *testing.T) {
+	t.Run("Fail to delete note", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 

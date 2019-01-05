@@ -17,6 +17,12 @@ lint:
 test:
 	@ go test ./...
 
+.PHONY: cover
+cover:
+	@ go test -coverprofile cover.out ./...
+	@ go tool cover -html=cover.out -o cover.html
+	@ rm -f cover.out
+
 .PHONY: build
 build:
 	@ go build -o ./bin/nott ./cmd/nott
