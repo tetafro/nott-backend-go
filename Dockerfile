@@ -1,17 +1,20 @@
-FROM golang:1.10-alpine AS build
+FROM golang:1.11-alpine AS build
 
-WORKDIR /go/src/github.com/tetafro/nott-backend-go
+WORKDIR /build
+
+RUN apk add --no-cache git gcc musl-dev
 
 COPY . .
 
-RUN go build -o ./bin/nott ./cmd/nott
+RUN go mod download && \
+    go build -o ./bin/nott ./cmd/nott
 
 FROM alpine:3.7
 
 WORKDIR /app
 
 COPY migrations migrations
-COPY --from=build /go/src/github.com/tetafro/nott-backend-go/bin/nott /app/
+COPY --from=build /build/bin/nott /app/
 
 RUN apk add --no-cache ca-certificates && \
     addgroup -S -g 5000 nott && \

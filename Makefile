@@ -1,10 +1,6 @@
-.PHONY: init
-init:
-	@ dep ensure -v -vendor-only
-
 .PHONY: dep
 dep:
-	@ dep ensure -v
+	@ go mod download
 
 .PHONY: mock
 mock:
@@ -31,4 +27,4 @@ run:
 
 .PHONY: docker
 docker:
-	@ docker build -t tetafro/nott-backend-go .
+	@ docker image build -t tetafro/nott-backend-go .

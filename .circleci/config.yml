@@ -2,43 +2,44 @@ version: 2
 jobs:
   dep:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
     steps:
       - checkout
       - run:
-          name: Install dep
-          command: go get -u github.com/golang/dep/cmd/dep
-      - run:
           name: Get project dependencies
-          command: dep ensure -vendor-only
-      - persist_to_workspace:
-          root: /go/src/github.com/tetafro
+          command: go mod download
+      - save_cache:
+          key: gomod-cache-{{ checksum "go.sum" }}
           paths:
-            - nott-backend-go
+            - /go/pkg/mod
   test:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
     steps:
-      - attach_workspace:
-          at: /go/src/github.com/tetafro
+      - checkout
+      - restore_cache:
+          keys:
+            - gomod-cache-{{ checksum "go.sum" }}
       - run:
           name: Run tests
           command: go test ./...
-      - run:
-          name: Install linters
-          command: go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-      - run:
-          name: Run linters
-          command: golangci-lint run
   lint:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
     steps:
-      - attach_workspace:
-          at: /go/src/github.com/tetafro
+      - checkout
+      - restore_cache:
+          keys:
+            - gomod-cache-{{ checksum "go.sum" }}
       - run:
           name: Install linters
           command: go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
@@ -47,20 +48,28 @@ jobs:
           command: golangci-lint run
   codecov:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
     steps:
-      - attach_workspace:
-          at: /go/src/github.com/tetafro
+      - checkout
+      - restore_cache:
+          keys:
+            - gomod-cache-{{ checksum "go.sum" }}
       - run: ./.circleci/codecov.sh
       - run: bash <(curl -s https://codecov.io/bash)
   publish:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
     steps:
-      - attach_workspace:
-          at: /go/src/github.com/tetafro
+      - checkout
+      - restore_cache:
+          keys:
+            - gomod-cache-{{ checksum "go.sum" }}
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
