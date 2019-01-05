@@ -31,6 +31,7 @@ func NewAuthMiddleware(users storage.UsersRepo, log logrus.FieldLogger) func(htt
 			}
 			if err != nil {
 				log.Errorf("Failed to get user from database: %v", err)
+				internalServerError(w)
 				return
 			}
 			req = addUser(req, u)
