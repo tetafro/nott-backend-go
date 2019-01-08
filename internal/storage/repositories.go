@@ -45,20 +45,20 @@ type NotesRepo interface {
 
 // FoldersFilter is a filter for searching foldres in repository.
 type FoldersFilter struct {
-	ID     *uint
-	UserID *uint
+	ID     *int
+	UserID *int
 }
 
 // NotepadsFilter is a filter for searching notepads in repository.
 type NotepadsFilter struct {
-	ID       *uint
-	UserID   *uint
-	FolderID *uint
+	ID       *int
+	UserID   *int
+	FolderID *int
 }
 
 // NotesFilter is a filter for searching notes in repository.
 type NotesFilter struct {
-	ID        *uint
-	UserID    *uint
-	NotepadID *uint
+	ID        *int
+	UserID    *int
+	NotepadID *int
 }

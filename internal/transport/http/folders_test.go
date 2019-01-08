@@ -22,7 +22,7 @@ func TestFoldersController(t *testing.T) {
 	log := logrus.New()
 	log.Out = ioutil.Discard
 
-	Uint := func(n uint) *uint {
+	Int := func(n int) *int {
 		return &n
 	}
 	user := auth.User{ID: 1}
@@ -32,8 +32,8 @@ func TestFoldersController(t *testing.T) {
 		defer ctrl.Finish()
 
 		folders := []domain.Folder{
-			{ID: 10, UserID: user.ID, ParentID: Uint(30), Title: "Folder 10"},
-			{ID: 15, UserID: user.ID, ParentID: Uint(35), Title: "Folder 15"},
+			{ID: 10, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"},
+			{ID: 15, UserID: user.ID, ParentID: Int(35), Title: "Folder 15"},
 		}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
@@ -103,8 +103,8 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
-		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Uint(30), Title: "Folder 10"}
+		id := 10
+		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Create(folder).Return(folder, nil)
@@ -144,8 +144,8 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
-		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Uint(30), Title: "Folder 10"}
+		id := 10
+		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Update(folder).Return(domain.Folder{}, fmt.Errorf("error"))
@@ -171,9 +171,9 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		folders := []domain.Folder{
-			{ID: id, UserID: user.ID, ParentID: Uint(30), Title: "Folder 10"},
+			{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"},
 		}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
@@ -214,7 +214,7 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Get(
@@ -239,7 +239,7 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Get(
@@ -264,8 +264,8 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
-		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Uint(30), Title: "Folder 10"}
+		id := 10
+		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Update(folder).Return(folder, nil)
@@ -306,8 +306,8 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
-		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Uint(30), Title: "Folder 10"}
+		id := 10
+		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Update(folder).Return(domain.Folder{}, fmt.Errorf("error"))
@@ -333,7 +333,7 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		folder := domain.Folder{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
@@ -357,7 +357,7 @@ func TestFoldersController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		folder := domain.Folder{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)

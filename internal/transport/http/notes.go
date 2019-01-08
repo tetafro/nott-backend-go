@@ -36,8 +36,7 @@ func (c *NotesController) GetList(w http.ResponseWriter, req *http.Request) {
 			badRequest(w, "Notepad ID must be an integer number")
 			return
 		}
-		unid := uint(nid)
-		f.NotepadID = &unid
+		f.NotepadID = &nid
 	}
 
 	notes, err := c.repo.Get(f)

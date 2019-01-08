@@ -7,7 +7,7 @@ import (
 )
 
 func TestFolderValidation(t *testing.T) {
-	parentID := uint(10)
+	parentID := 10
 
 	cases := []struct {
 		title  string

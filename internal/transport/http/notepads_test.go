@@ -100,7 +100,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepad := domain.Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
@@ -141,7 +141,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepad := domain.Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
@@ -168,7 +168,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepads := []domain.Notepad{
 			{ID: id, UserID: 20, FolderID: 30, Title: "Notepad 10"},
 		}
@@ -211,7 +211,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
 		repoMock.EXPECT().Get(
@@ -236,7 +236,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
 		repoMock.EXPECT().Get(
@@ -261,7 +261,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepad := domain.Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
@@ -303,7 +303,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepad := domain.Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
@@ -330,7 +330,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepad := domain.Notepad{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
@@ -354,7 +354,7 @@ func TestNotepadsController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notepad := domain.Notepad{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)

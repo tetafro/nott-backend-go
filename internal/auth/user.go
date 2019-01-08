@@ -10,7 +10,7 @@ var regexpEmail = regexp.MustCompile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]
 
 // User represents a user that used for authenticating.
 type User struct {
-	ID       uint   `json:"id" gorm:"column:id"`
+	ID       int    `json:"id" gorm:"column:id"`
 	Email    string `json:"email" gorm:"column:email"`
 	Password string `json:"-" gorm:"column:password"`
 

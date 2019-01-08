@@ -22,7 +22,7 @@ func TestNotesNController(t *testing.T) {
 	log := logrus.New()
 	log.Out = ioutil.Discard
 
-	Uint := func(n uint) *uint {
+	Int := func(n int) *int {
 		return &n
 	}
 	user := auth.User{ID: 1}
@@ -38,7 +38,7 @@ func TestNotesNController(t *testing.T) {
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
 		repoMock.EXPECT().Get(
-			storage.NotesFilter{UserID: &user.ID, NotepadID: Uint(10)},
+			storage.NotesFilter{UserID: &user.ID, NotepadID: Int(10)},
 		).Return(notes, nil)
 
 		c := NewNotesController(repoMock, log)
@@ -105,7 +105,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		note := domain.Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
@@ -147,7 +147,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		note := domain.Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
@@ -174,7 +174,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		notes := []domain.Note{
 			{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"},
 		}
@@ -219,7 +219,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
 		repoMock.EXPECT().Get(
@@ -244,7 +244,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
 		repoMock.EXPECT().Get(
@@ -269,7 +269,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		note := domain.Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
@@ -312,7 +312,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		note := domain.Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
@@ -339,7 +339,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		note := domain.Note{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
@@ -363,7 +363,7 @@ func TestNotesNController(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		id := uint(10)
+		id := 10
 		note := domain.Note{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)

@@ -7,9 +7,9 @@ import (
 
 // Folder represents a folder that contains notepads.
 type Folder struct {
-	ID       uint   `json:"id" gorm:"column:id"`
-	UserID   uint   `json:"user_id" gorm:"column:user_id"`
-	ParentID *uint  `json:"parent_id" gorm:"column:parent_id"`
+	ID       int    `json:"id" gorm:"column:id"`
+	UserID   int    `json:"user_id" gorm:"column:user_id"`
+	ParentID *int   `json:"parent_id" gorm:"column:parent_id"`
 	Title    string `json:"title" gorm:"column:title"`
 
 	// Managed by gorm callbacks
