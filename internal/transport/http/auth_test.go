@@ -27,7 +27,7 @@ func TestAuthController(t *testing.T) {
 	user := auth.User{ID: 1, Email: "bob@example.com", Password: hash}
 	token := auth.Token{AccessToken: "qwerty123", ExpiresAt: 10}
 
-	t.Run("Succesful registration", func(t *testing.T) {
+	t.Run("Registrater new user", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -66,7 +66,29 @@ func TestAuthController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed registration because user already exists", func(t *testing.T) {
+	t.Run("Fail to registrer because of input data", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usersRepoMock := storage.NewMockUsersRepo(ctrl)
+
+		tokenerMock := auth.NewMockTokener(ctrl)
+
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
+
+		payload := []byte("{malformed-json:")
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+
+		c.Register(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
+	})
+
+	t.Run("Fail to registrer because user already exists", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -90,7 +112,7 @@ func TestAuthController(t *testing.T) {
 		assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
 	})
 
-	t.Run("Failed registration because of users repo error", func(t *testing.T) {
+	t.Run("Fail to registrer because of users repo error", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -115,7 +137,7 @@ func TestAuthController(t *testing.T) {
 		assert.Equal(t, resp.StatusCode, http.StatusInternalServerError)
 	})
 
-	t.Run("Succesful login", func(t *testing.T) {
+	t.Run("Login", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -153,7 +175,29 @@ func TestAuthController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed login because of users repo", func(t *testing.T) {
+	t.Run("Fail to login because of input data", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usersRepoMock := storage.NewMockUsersRepo(ctrl)
+
+		tokenerMock := auth.NewMockTokener(ctrl)
+
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
+
+		payload := []byte("{malformed-json:")
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+
+		c.Login(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
+	})
+
+	t.Run("Fail to login because of users repo", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -175,6 +219,31 @@ func TestAuthController(t *testing.T) {
 
 		resp := w.Result()
 		assert.Equal(t, resp.StatusCode, http.StatusInternalServerError)
+	})
+
+	t.Run("Fail to login because of tokener error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usersRepoMock := storage.NewMockUsersRepo(ctrl)
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(user, nil)
+
+		tokenerMock := auth.NewMockTokener(ctrl)
+		tokenerMock.EXPECT().Issue(user).Return(auth.Token{}, errors.New("error"))
+
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
+
+		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
+		assert.NoError(t, err)
+
+		url := "/"
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+
+		c.Login(w, req)
+
+		resp := w.Result()
+		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
 	})
 
 	t.Run("Get profile", func(t *testing.T) {
@@ -254,7 +323,7 @@ func TestAuthController(t *testing.T) {
 		}`)
 	})
 
-	t.Run("Failed to update profile", func(t *testing.T) {
+	t.Run("Fail to update profile", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 

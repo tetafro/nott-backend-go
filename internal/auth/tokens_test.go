@@ -27,4 +27,11 @@ func TestJWT(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, userID, id)
 	})
+
+	t.Run("Fail to parse token", func(t *testing.T) {
+		tokener := NewJWTokener(secret)
+
+		_, err := tokener.Parse("malformed.token")
+		assert.Error(t, err)
+	})
 }
