@@ -1,10 +1,10 @@
 package postgres
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
 )
@@ -31,7 +31,7 @@ func NewTokensRepo(db *gorm.DB) *TokensRepo {
 // Create creates a new token in repository.
 func (r *TokensRepo) Create(t auth.Token) (auth.Token, error) {
 	if t.UserID == 0 {
-		return auth.Token{}, fmt.Errorf("user id is empty")
+		return auth.Token{}, errors.New("user id is empty")
 	}
 	if t.String == "" {
 		t.String = randString(tokenLen)
@@ -41,7 +41,7 @@ func (r *TokensRepo) Create(t auth.Token) (auth.Token, error) {
 	}
 
 	if err := r.db.Create(&t).Error; err != nil {
-		return auth.Token{}, fmt.Errorf("query failed with error: %v", err)
+		return auth.Token{}, errors.Wrap(err, "query error")
 	}
 
 	return t, nil
@@ -50,7 +50,7 @@ func (r *TokensRepo) Create(t auth.Token) (auth.Token, error) {
 // Delete deletes token from repository.
 func (r *TokensRepo) Delete(t auth.Token) error {
 	if err := r.db.Delete(&t).Error; err != nil {
-		return fmt.Errorf("query failed with error: %v", err)
+		return errors.Wrap(err, "query error")
 	}
 	return nil
 }

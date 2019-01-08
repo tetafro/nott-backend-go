@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"fmt"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 // Note represents a note that contains text.
@@ -23,13 +24,13 @@ type Note struct {
 // Validate validates note.
 func (n Note) Validate() error {
 	if n.UserID == 0 {
-		return fmt.Errorf("unknown user")
+		return errors.New("unknown user")
 	}
 	if n.NotepadID == 0 {
-		return fmt.Errorf("notepad id cannot be empty")
+		return errors.New("notepad id cannot be empty")
 	}
 	if n.Title == "" {
-		return fmt.Errorf("title cannot be empty")
+		return errors.New("title cannot be empty")
 	}
 	return nil
 }

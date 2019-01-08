@@ -15,6 +15,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.3.0
 	github.com/lib/pq v0.0.0-20180327071824-d34b9ff171c2
+	github.com/pkg/errors v0.8.1
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95
 	github.com/sirupsen/logrus v1.0.5

@@ -2,9 +2,9 @@ package httpapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
@@ -85,17 +85,17 @@ func (c *OAuthController) handleUser(email string) (auth.Token, error) {
 		// Create new user
 		u, err = c.users.Create(auth.User{Email: email})
 		if err != nil {
-			return auth.Token{}, fmt.Errorf("create user: %v", err)
+			return auth.Token{}, errors.Wrap(err, "create user")
 		}
 	default:
 		// Unexpected error
-		return auth.Token{}, fmt.Errorf("get user: %v", err)
+		return auth.Token{}, errors.Wrap(err, "get user")
 	}
 
 	// Generate token
 	t, err := c.tokens.Create(auth.Token{UserID: u.ID})
 	if err != nil {
-		return auth.Token{}, fmt.Errorf("create token: %v", err)
+		return auth.Token{}, errors.Wrap(err, "create token")
 	}
 
 	return t, nil

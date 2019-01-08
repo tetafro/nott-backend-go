@@ -1,12 +1,12 @@
 package application
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
@@ -92,7 +92,7 @@ func New(
 func (app *Application) Run() error {
 	app.log.Infof("Start listening at %s", app.addr)
 	if err := http.ListenAndServe(app.addr, app.router); err != nil {
-		return fmt.Errorf("failed to start server: %v", err)
+		return errors.Wrap(err, "start server")
 	}
 	return nil
 }

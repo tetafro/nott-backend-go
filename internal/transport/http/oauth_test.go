@@ -1,13 +1,13 @@
 package httpapi
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -108,7 +108,7 @@ func TestOAuthController(t *testing.T) {
 		user := auth.User{ID: 10, Email: "bob@example.com"}
 
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, fmt.Errorf("error"))
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, errors.New("error"))
 
 		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
 

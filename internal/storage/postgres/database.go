@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/golang-migrate/migrate"
@@ -9,6 +8,7 @@ import (
 	_ "github.com/golang-migrate/migrate/source/file" // db migrations from file
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // orm extension for postgres
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,14 +47,14 @@ func Connect(conn string, log logrus.FieldLogger, debug bool) (*gorm.DB, error) 
 func Migrate(db *gorm.DB, migrations string) error {
 	drv, err := postgres.WithInstance(db.DB(), &postgres.Config{})
 	if err != nil {
-		return fmt.Errorf("failed to init driver: %v", err)
+		return errors.Wrap(err, "init driver")
 	}
 	m, err := migrate.NewWithDatabaseInstance("file://"+migrations, "postgres", drv)
 	if err != nil {
-		return fmt.Errorf("failed to init migrator: %v", err)
+		return errors.Wrap(err, "init migrator")
 	}
 	if err = m.Up(); err != nil && err != migrate.ErrNoChange {
-		return fmt.Errorf("migration failed with error: %v", err)
+		return errors.Wrap(err, "migration error")
 	}
 	return nil
 }

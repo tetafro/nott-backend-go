@@ -3,13 +3,13 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -81,7 +81,7 @@ func TestNotepadsController(t *testing.T) {
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
 		repoMock.EXPECT().Get(
 			storage.NotepadsFilter{UserID: &user.ID},
-		).Return(nil, fmt.Errorf("error"))
+		).Return(nil, errors.New("error"))
 
 		c := NewNotepadsController(repoMock, log)
 
@@ -145,7 +145,7 @@ func TestNotepadsController(t *testing.T) {
 		notepad := domain.Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
-		repoMock.EXPECT().Update(notepad).Return(domain.Notepad{}, fmt.Errorf("error"))
+		repoMock.EXPECT().Update(notepad).Return(domain.Notepad{}, errors.New("error"))
 
 		c := NewNotepadsController(repoMock, log)
 
@@ -216,7 +216,7 @@ func TestNotepadsController(t *testing.T) {
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
 		repoMock.EXPECT().Get(
 			storage.NotepadsFilter{ID: &id, UserID: &user.ID},
-		).Return(nil, fmt.Errorf("error"))
+		).Return(nil, errors.New("error"))
 
 		c := NewNotepadsController(repoMock, log)
 
@@ -307,7 +307,7 @@ func TestNotepadsController(t *testing.T) {
 		notepad := domain.Notepad{ID: id, UserID: user.ID, FolderID: 30, Title: "Notepad 10"}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
-		repoMock.EXPECT().Update(notepad).Return(domain.Notepad{}, fmt.Errorf("error"))
+		repoMock.EXPECT().Update(notepad).Return(domain.Notepad{}, errors.New("error"))
 
 		c := NewNotepadsController(repoMock, log)
 
@@ -358,7 +358,7 @@ func TestNotepadsController(t *testing.T) {
 		notepad := domain.Notepad{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockNotepadsRepo(ctrl)
-		repoMock.EXPECT().Delete(notepad).Return(fmt.Errorf("error"))
+		repoMock.EXPECT().Delete(notepad).Return(errors.New("error"))
 
 		c := NewNotepadsController(repoMock, log)
 

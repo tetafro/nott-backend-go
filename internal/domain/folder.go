@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"fmt"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 // Folder represents a folder that contains notepads.
@@ -20,10 +21,10 @@ type Folder struct {
 // Validate validates folder.
 func (f Folder) Validate() error {
 	if f.UserID == 0 {
-		return fmt.Errorf("unknown user")
+		return errors.New("unknown user")
 	}
 	if f.Title == "" {
-		return fmt.Errorf("title cannot be empty")
+		return errors.New("title cannot be empty")
 	}
 	return nil
 }

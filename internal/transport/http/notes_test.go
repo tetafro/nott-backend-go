@@ -3,13 +3,13 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -86,7 +86,7 @@ func TestNotesNController(t *testing.T) {
 		repoMock := storage.NewMockNotesRepo(ctrl)
 		repoMock.EXPECT().Get(
 			storage.NotesFilter{UserID: &user.ID},
-		).Return(nil, fmt.Errorf("error"))
+		).Return(nil, errors.New("error"))
 
 		c := NewNotesController(repoMock, log)
 
@@ -151,7 +151,7 @@ func TestNotesNController(t *testing.T) {
 		note := domain.Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
-		repoMock.EXPECT().Update(note).Return(domain.Note{}, fmt.Errorf("error"))
+		repoMock.EXPECT().Update(note).Return(domain.Note{}, errors.New("error"))
 
 		c := NewNotesController(repoMock, log)
 
@@ -249,7 +249,7 @@ func TestNotesNController(t *testing.T) {
 		repoMock := storage.NewMockNotesRepo(ctrl)
 		repoMock.EXPECT().Get(
 			storage.NotesFilter{ID: &id, UserID: &user.ID},
-		).Return(nil, fmt.Errorf("error"))
+		).Return(nil, errors.New("error"))
 
 		c := NewNotesController(repoMock, log)
 
@@ -316,7 +316,7 @@ func TestNotesNController(t *testing.T) {
 		note := domain.Note{ID: id, UserID: user.ID, NotepadID: 30, Title: "Note 10", Text: "Hello"}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
-		repoMock.EXPECT().Update(note).Return(domain.Note{}, fmt.Errorf("error"))
+		repoMock.EXPECT().Update(note).Return(domain.Note{}, errors.New("error"))
 
 		c := NewNotesController(repoMock, log)
 
@@ -367,7 +367,7 @@ func TestNotesNController(t *testing.T) {
 		note := domain.Note{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockNotesRepo(ctrl)
-		repoMock.EXPECT().Delete(note).Return(fmt.Errorf("error"))
+		repoMock.EXPECT().Delete(note).Return(errors.New("error"))
 
 		c := NewNotesController(repoMock, log)
 

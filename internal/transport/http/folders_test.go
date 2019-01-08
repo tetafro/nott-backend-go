@@ -3,13 +3,13 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -84,7 +84,7 @@ func TestFoldersController(t *testing.T) {
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Get(
 			storage.FoldersFilter{UserID: &user.ID},
-		).Return(nil, fmt.Errorf("error"))
+		).Return(nil, errors.New("error"))
 
 		c := NewFoldersController(repoMock, log)
 
@@ -148,7 +148,7 @@ func TestFoldersController(t *testing.T) {
 		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
-		repoMock.EXPECT().Update(folder).Return(domain.Folder{}, fmt.Errorf("error"))
+		repoMock.EXPECT().Update(folder).Return(domain.Folder{}, errors.New("error"))
 
 		c := NewFoldersController(repoMock, log)
 
@@ -244,7 +244,7 @@ func TestFoldersController(t *testing.T) {
 		repoMock := storage.NewMockFoldersRepo(ctrl)
 		repoMock.EXPECT().Get(
 			storage.FoldersFilter{ID: &id, UserID: &user.ID},
-		).Return(nil, fmt.Errorf("error"))
+		).Return(nil, errors.New("error"))
 
 		c := NewFoldersController(repoMock, log)
 
@@ -310,7 +310,7 @@ func TestFoldersController(t *testing.T) {
 		folder := domain.Folder{ID: id, UserID: user.ID, ParentID: Int(30), Title: "Folder 10"}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
-		repoMock.EXPECT().Update(folder).Return(domain.Folder{}, fmt.Errorf("error"))
+		repoMock.EXPECT().Update(folder).Return(domain.Folder{}, errors.New("error"))
 
 		c := NewFoldersController(repoMock, log)
 
@@ -361,7 +361,7 @@ func TestFoldersController(t *testing.T) {
 		folder := domain.Folder{ID: id, UserID: user.ID}
 
 		repoMock := storage.NewMockFoldersRepo(ctrl)
-		repoMock.EXPECT().Delete(folder).Return(fmt.Errorf("error"))
+		repoMock.EXPECT().Delete(folder).Return(errors.New("error"))
 
 		c := NewFoldersController(repoMock, log)
 

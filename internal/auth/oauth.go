@@ -3,10 +3,10 @@ package auth
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"strings"
 
+	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 )
@@ -41,24 +41,24 @@ func (p *OAuthProvider) GetEmail(code string) (string, error) {
 	// Get access token
 	t, err := p.config.Exchange(context.Background(), code)
 	if err != nil {
-		return "", fmt.Errorf("get access token: %v", err)
+		return "", errors.Wrap(err, "get access token")
 	}
 
 	client := p.config.Client(context.Background(), t)
 	resp, err := client.Get(p.userInfoURL)
 	if err != nil {
-		return "", fmt.Errorf("get user info: %v", err)
+		return "", errors.Wrap(err, "get user info")
 	}
 	defer resp.Body.Close()
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("read body: %v", err)
+		return "", errors.Wrap(err, "read body")
 	}
 
 	var gu githubUser
 	if err := json.Unmarshal(data, &gu); err != nil {
-		return "", fmt.Errorf("unmarshal user: %v", err)
+		return "", errors.Wrap(err, "unmarshal user")
 	}
 
 	return gu.Email, nil

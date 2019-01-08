@@ -3,13 +3,13 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -98,7 +98,7 @@ func TestAuthController(t *testing.T) {
 
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, domain.ErrNotFound)
-		usersRepoMock.EXPECT().Create(gomock.Any()).Return(auth.User{}, fmt.Errorf("error"))
+		usersRepoMock.EXPECT().Create(gomock.Any()).Return(auth.User{}, errors.New("error"))
 
 		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
 
@@ -162,7 +162,7 @@ func TestAuthController(t *testing.T) {
 		defer ctrl.Finish()
 
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, fmt.Errorf("error"))
+		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, errors.New("error"))
 
 		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
 
@@ -191,7 +191,7 @@ func TestAuthController(t *testing.T) {
 		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
 		tokensRepoMock.EXPECT().Create(
 			auth.Token{UserID: token.UserID},
-		).Return(auth.Token{}, fmt.Errorf("error"))
+		).Return(auth.Token{}, errors.New("error"))
 
 		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
 
@@ -258,7 +258,7 @@ func TestAuthController(t *testing.T) {
 		user := auth.User{Email: "bob@example.com"}
 
 		userRepoMock := storage.NewMockUsersRepo(ctrl)
-		userRepoMock.EXPECT().Update(user).Return(auth.User{}, fmt.Errorf("fatal error"))
+		userRepoMock.EXPECT().Update(user).Return(auth.User{}, errors.New("error"))
 
 		tokenRepoMock := storage.NewMockTokensRepo(ctrl)
 

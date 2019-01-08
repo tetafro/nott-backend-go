@@ -1,9 +1,8 @@
 package postgres
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 )
 
 // transact executes function inside one transaction
@@ -20,7 +19,7 @@ func transact(db *gorm.DB, fn func(*gorm.DB) error) (err error) {
 		} else {
 			tx.Commit()
 			if tx.Error != nil {
-				err = fmt.Errorf("failed to commit transaction: %v", tx.Error)
+				err = errors.Wrap(err, "commit transaction")
 			}
 		}
 	}()

@@ -1,13 +1,13 @@
 package httpapi
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -150,7 +150,7 @@ func TestAuthMiddleware(t *testing.T) {
 		defer ctrl.Finish()
 
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByToken("token").Return(auth.User{}, fmt.Errorf("error"))
+		usersRepoMock.EXPECT().GetByToken("token").Return(auth.User{}, errors.New("error"))
 
 		mw := NewAuthMiddleware(usersRepoMock, log)
 

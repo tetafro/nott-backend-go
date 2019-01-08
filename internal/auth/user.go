@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"fmt"
 	"regexp"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 var regexpEmail = regexp.MustCompile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+`)
@@ -22,10 +23,10 @@ type User struct {
 // Validate validates user.
 func (u User) Validate() error {
 	if u.Email == "" {
-		return fmt.Errorf("email cannot be empty")
+		return errors.New("email cannot be empty")
 	}
 	if !regexpEmail.MatchString(u.Email) {
-		return fmt.Errorf("invalid email format")
+		return errors.New("invalid email format")
 	}
 	return nil
 }

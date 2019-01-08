@@ -1,9 +1,8 @@
 package postgres
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
 	"github.com/tetafro/nott-backend-go/internal/domain"
@@ -29,7 +28,7 @@ func (r *UsersRepo) GetByEmail(email string) (auth.User, error) {
 		return auth.User{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return auth.User{}, fmt.Errorf("query failed with error: %v", err)
+		return auth.User{}, errors.Wrap(err, "query error")
 	}
 
 	return u, nil
@@ -46,7 +45,7 @@ func (r *UsersRepo) GetByToken(token string) (auth.User, error) {
 		return auth.User{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return auth.User{}, fmt.Errorf("query failed with error: %v", err)
+		return auth.User{}, errors.Wrap(err, "query error")
 	}
 
 	return u, nil
@@ -56,7 +55,7 @@ func (r *UsersRepo) GetByToken(token string) (auth.User, error) {
 func (r *UsersRepo) Create(u auth.User) (auth.User, error) {
 	q := r.db.Create(&u)
 	if err := q.Error; err != nil {
-		return auth.User{}, fmt.Errorf("query failed with error: %v", err)
+		return auth.User{}, errors.Wrap(err, "query error")
 	}
 	q.Scan(&u)
 	return u, nil
@@ -74,14 +73,14 @@ func (r *UsersRepo) Update(u auth.User) (auth.User, error) {
 			return domain.ErrNotFound
 		}
 		if err != nil {
-			return fmt.Errorf("failed to check user in database: %v", err)
+			return errors.Wrap(err, "check user in database")
 		}
 
 		// NOTE: Save() method doesn't return ErrRecordNotFound, but
 		// instead makes INSERT. But this is the only method that updates
 		// all fields of the structure (even if they are empty).
 		if err = tx.Save(&u).Error; err != nil {
-			return fmt.Errorf("query failed with error: %v", err)
+			return errors.Wrap(err, "query error")
 		}
 
 		return nil
