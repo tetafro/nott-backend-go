@@ -23,8 +23,7 @@ func TestOAuthController(t *testing.T) {
 	t.Run("Get list of providers", func(t *testing.T) {
 		c := NewOAuthController(
 			map[string]*auth.OAuthProvider{
-				"example-1": {Name: "example-1", URL: "http://example-1.com"},
-				"example-2": {Name: "example-2", URL: "http://example-2.com"},
+				"example": {Name: "example", URL: "http://example.com"},
 			},
 			nil, nil, nil,
 		)
@@ -47,12 +46,8 @@ func TestOAuthController(t *testing.T) {
 		assert.JSONEq(t, string(body), `{
 			"data": [
 				{
-					"name": "example-1",
-					"url": "http://example-1.com"
-				},
-				{
-					"name": "example-2",
-					"url": "http://example-2.com"
+					"name": "example",
+					"url": "http://example.com"
 				}
 			]
 		}`)
