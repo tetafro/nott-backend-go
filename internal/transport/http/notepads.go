@@ -23,9 +23,9 @@ func NewNotepadsController(repo storage.NotepadsRepo, log logrus.FieldLogger) *N
 
 // GetList handles request for getting notepads.
 func (c *NotepadsController) GetList(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 
-	notepads, err := c.repo.Get(storage.NotepadsFilter{UserID: &user.ID})
+	notepads, err := c.repo.Get(storage.NotepadsFilter{UserID: &userID})
 	if err != nil {
 		c.log.Errorf("Failed to get notepads: %v", err)
 		internalServerError(w)
@@ -37,14 +37,14 @@ func (c *NotepadsController) GetList(w http.ResponseWriter, req *http.Request) {
 
 // GetOne handles request for getting notepad by id.
 func (c *NotepadsController) GetOne(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
 		return
 	}
 
-	notepads, err := c.repo.Get(storage.NotepadsFilter{ID: &id, UserID: &user.ID})
+	notepads, err := c.repo.Get(storage.NotepadsFilter{ID: &id, UserID: &userID})
 	if err != nil {
 		c.log.Errorf("Failed to get notepad: %v", err)
 		internalServerError(w)
@@ -60,7 +60,7 @@ func (c *NotepadsController) GetOne(w http.ResponseWriter, req *http.Request) {
 
 // Create handles request for creating notepad.
 func (c *NotepadsController) Create(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 
 	var err error
 
@@ -69,7 +69,7 @@ func (c *NotepadsController) Create(w http.ResponseWriter, req *http.Request) {
 		badRequest(w, "invalid json")
 		return
 	}
-	n.UserID = user.ID
+	n.UserID = userID
 
 	if err = n.Validate(); err != nil {
 		badRequest(w, "invalid notepad"+err.Error())
@@ -88,7 +88,7 @@ func (c *NotepadsController) Create(w http.ResponseWriter, req *http.Request) {
 
 // Update handles request for updating notepad.
 func (c *NotepadsController) Update(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
@@ -101,7 +101,7 @@ func (c *NotepadsController) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	n.ID = id
-	n.UserID = user.ID
+	n.UserID = userID
 
 	if err = n.Validate(); err != nil {
 		badRequest(w, "invalid notepad"+err.Error())
@@ -124,14 +124,14 @@ func (c *NotepadsController) Update(w http.ResponseWriter, req *http.Request) {
 
 // Delete handles request for deleting notepad.
 func (c *NotepadsController) Delete(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
 		return
 	}
 
-	n := domain.Notepad{ID: id, UserID: user.ID}
+	n := domain.Notepad{ID: id, UserID: userID}
 	if err = c.repo.Delete(n); err != nil {
 		c.log.Errorf("Failed to update notepad: %v", err)
 		internalServerError(w)

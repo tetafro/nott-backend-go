@@ -5,6 +5,10 @@ dep:
 .PHONY: mock
 mock:
 	@ mockgen \
+		-source=internal/auth/tokens.go \
+		-destination=internal/auth/tokens_mock.go \
+		-package=auth
+	@ mockgen \
 		-source=internal/storage/repositories.go \
 		-destination=internal/storage/repositories_mock.go \
 		-package=storage

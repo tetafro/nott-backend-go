@@ -25,7 +25,7 @@ func TestAuthController(t *testing.T) {
 	password := "qwerty"
 	hash := "$2a$14$EsnwEn3C6cxQUWXvUpJ6S.XsJSku11hTSULXn8NEIG1diGcGEgrii"
 	user := auth.User{ID: 1, Email: "bob@example.com", Password: hash}
-	token := auth.Token{ID: 10, UserID: user.ID, String: "qwerty123", TTL: 10}
+	token := auth.Token{AccessToken: "qwerty123", ExpiresAt: 10}
 
 	t.Run("Succesful registration", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
@@ -35,12 +35,10 @@ func TestAuthController(t *testing.T) {
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, domain.ErrNotFound)
 		usersRepoMock.EXPECT().Create(gomock.Any()).Return(user, nil)
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
-		tokensRepoMock.EXPECT().Create(
-			auth.Token{UserID: token.UserID},
-		).Return(token, nil)
+		tokenerMock := auth.NewMockTokener(ctrl)
+		tokenerMock.EXPECT().Issue(user).Return(token, nil)
 
-		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
@@ -62,8 +60,8 @@ func TestAuthController(t *testing.T) {
 
 		assert.JSONEq(t, string(body), `{
 			"data": {
-				"string": "qwerty123",
-				"ttl": 10
+				"access_token": "qwerty123",
+				"expires_at": 10
 			}
 		}`)
 	})
@@ -75,9 +73,9 @@ func TestAuthController(t *testing.T) {
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{ID: 1}, nil)
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
@@ -100,9 +98,9 @@ func TestAuthController(t *testing.T) {
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, domain.ErrNotFound)
 		usersRepoMock.EXPECT().Create(gomock.Any()).Return(auth.User{}, errors.New("error"))
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
@@ -124,12 +122,10 @@ func TestAuthController(t *testing.T) {
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(user, nil)
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
-		tokensRepoMock.EXPECT().Create(
-			auth.Token{UserID: token.UserID},
-		).Return(token, nil)
+		tokenerMock := auth.NewMockTokener(ctrl)
+		tokenerMock.EXPECT().Issue(user).Return(token, nil)
 
-		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
@@ -151,8 +147,8 @@ func TestAuthController(t *testing.T) {
 
 		assert.JSONEq(t, string(body), `{
 			"data": {
-				"string": "qwerty123",
-				"ttl": 10
+				"access_token": "qwerty123",
+				"expires_at": 10
 			}
 		}`)
 	})
@@ -164,9 +160,9 @@ func TestAuthController(t *testing.T) {
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, errors.New("error"))
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+		c := NewAuthController(usersRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
 		assert.NoError(t, err)
@@ -181,35 +177,42 @@ func TestAuthController(t *testing.T) {
 		assert.Equal(t, resp.StatusCode, http.StatusInternalServerError)
 	})
 
-	t.Run("Failed login because of tokens repo", func(t *testing.T) {
+	t.Run("Get profile", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		usersRepoMock := storage.NewMockUsersRepo(ctrl)
-		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(user, nil)
+		user := auth.User{ID: 10, Email: "bob@example.com"}
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
-		tokensRepoMock.EXPECT().Create(
-			auth.Token{UserID: token.UserID},
-		).Return(auth.Token{}, errors.New("error"))
+		userRepoMock := storage.NewMockUsersRepo(ctrl)
+		userRepoMock.EXPECT().GetByID(user.ID).Return(user, nil)
 
-		c := NewAuthController(usersRepoMock, tokensRepoMock, log)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		payload, err := json.Marshal(authRequest{Email: user.Email, Password: password})
-		assert.NoError(t, err)
+		c := NewAuthController(userRepoMock, tokenerMock, log)
 
 		url := "/"
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
+		req := httptest.NewRequest(http.MethodGet, url, nil)
+		req = addUserID(req, user.ID)
 
-		c.Login(w, req)
+		c.GetProfile(w, req)
 
 		resp := w.Result()
-		assert.Equal(t, resp.StatusCode, http.StatusInternalServerError)
-	})
+		assert.Equal(t, resp.StatusCode, http.StatusOK)
 
-	// "Get profile" is not tested here, because the only method,
-	// that can be tested, works inside auth middleware
+		body, err := ioutil.ReadAll(resp.Body)
+		assert.NoError(t, err)
+
+		err = resp.Body.Close()
+		assert.NoError(t, err)
+
+		assert.JSONEq(t, string(body), `{
+			"data": {
+				"id": 10,
+				"email": "bob@example.com"
+			}
+		}`)
+	})
 
 	t.Run("Update profile", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
@@ -220,9 +223,9 @@ func TestAuthController(t *testing.T) {
 		userRepoMock := storage.NewMockUsersRepo(ctrl)
 		userRepoMock.EXPECT().Update(user).Return(user, nil)
 
-		tokenRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		c := NewAuthController(userRepoMock, tokenRepoMock, log)
+		c := NewAuthController(userRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(user)
 		assert.NoError(t, err)
@@ -230,7 +233,7 @@ func TestAuthController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPut, url, bytes.NewBuffer(payload))
-		req = addUser(req, auth.User{ID: 10, Email: "alice@example.com"})
+		req = addUserID(req, user.ID)
 
 		c.UpdateProfile(w, req)
 
@@ -260,9 +263,9 @@ func TestAuthController(t *testing.T) {
 		userRepoMock := storage.NewMockUsersRepo(ctrl)
 		userRepoMock.EXPECT().Update(user).Return(auth.User{}, errors.New("error"))
 
-		tokenRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		c := NewAuthController(userRepoMock, tokenRepoMock, log)
+		c := NewAuthController(userRepoMock, tokenerMock, log)
 
 		payload, err := json.Marshal(user)
 		assert.NoError(t, err)
@@ -270,7 +273,7 @@ func TestAuthController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPut, url, bytes.NewBuffer(payload))
-		req = addUser(req, auth.User{Email: "alice@example.com"})
+		req = addUserID(req, user.ID)
 
 		c.UpdateProfile(w, req)
 

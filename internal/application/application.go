@@ -25,6 +25,7 @@ type Application struct {
 func New(
 	db *gorm.DB,
 	addr string,
+	signKey string,
 	providers map[string]*auth.OAuthProvider,
 	log logrus.FieldLogger,
 ) (*Application, error) {
@@ -40,12 +41,12 @@ func New(
 	notesController := httpapi.NewNotesController(notesRepo, log)
 
 	usersRepo := postgres.NewUsersRepo(db)
-	tokensRepo := postgres.NewTokensRepo(db)
-	authController := httpapi.NewAuthController(usersRepo, tokensRepo, log)
+	tokener := auth.NewJWTokener(signKey)
+	authController := httpapi.NewAuthController(usersRepo, tokener, log)
 
-	oauthController := httpapi.NewOAuthController(providers, usersRepo, tokensRepo, log)
+	oauthController := httpapi.NewOAuthController(providers, usersRepo, tokener, log)
 
-	mwAuth := httpapi.NewAuthMiddleware(usersRepo, log)
+	mwAuth := httpapi.NewAuthMiddleware(tokener, log)
 	mwLog := middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: log})
 
 	// Main router
@@ -54,7 +55,6 @@ func New(
 	app.router.MethodFunc(http.MethodGet, "/healthz", healthz)
 	app.router.MethodFunc(http.MethodPost, "/api/v1/register", authController.Register)
 	app.router.MethodFunc(http.MethodPost, "/api/v1/login", authController.Login)
-	app.router.MethodFunc(http.MethodPost, "/api/v1/logout", authController.Logout)
 	app.router.MethodFunc(http.MethodGet, "/api/v1/oauth/providers", oauthController.Providers)
 	app.router.MethodFunc(http.MethodPost, "/api/v1/oauth/github", oauthController.Github)
 

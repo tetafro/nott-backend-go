@@ -67,16 +67,16 @@ func TestOAuthController(t *testing.T) {
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(user, nil)
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
-		tokensRepoMock.EXPECT().Create(
-			auth.Token{UserID: user.ID},
-		).Return(auth.Token{UserID: user.ID, String: "qwerty"}, nil)
+		tokenerMock := auth.NewMockTokener(ctrl)
+		tokenerMock.EXPECT().Issue(user).Return(
+			auth.Token{AccessToken: "qwerty", ExpiresAt: 10}, nil,
+		)
 
-		c := NewOAuthController(nil, usersRepoMock, tokensRepoMock, log)
+		c := NewOAuthController(nil, usersRepoMock, tokenerMock, log)
 
 		token, err := c.handleUser(user.Email)
 		assert.NoError(t, err)
-		assert.Equal(t, "qwerty", token.String)
+		assert.Equal(t, "qwerty", token.AccessToken)
 	})
 
 	t.Run("Handle new user", func(t *testing.T) {
@@ -89,16 +89,16 @@ func TestOAuthController(t *testing.T) {
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, domain.ErrNotFound)
 		usersRepoMock.EXPECT().Create(auth.User{Email: user.Email}).Return(user, nil)
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
-		tokensRepoMock.EXPECT().Create(
-			auth.Token{UserID: user.ID},
-		).Return(auth.Token{UserID: user.ID, String: "qwerty"}, nil)
+		tokenerMock := auth.NewMockTokener(ctrl)
+		tokenerMock.EXPECT().Issue(user).Return(
+			auth.Token{AccessToken: "qwerty", ExpiresAt: 10}, nil,
+		)
 
-		c := NewOAuthController(nil, usersRepoMock, tokensRepoMock, log)
+		c := NewOAuthController(nil, usersRepoMock, tokenerMock, log)
 
 		token, err := c.handleUser(user.Email)
 		assert.NoError(t, err)
-		assert.Equal(t, "qwerty", token.String)
+		assert.Equal(t, "qwerty", token.AccessToken)
 	})
 
 	t.Run("Fail to handle user", func(t *testing.T) {
@@ -110,9 +110,9 @@ func TestOAuthController(t *testing.T) {
 		usersRepoMock := storage.NewMockUsersRepo(ctrl)
 		usersRepoMock.EXPECT().GetByEmail(user.Email).Return(auth.User{}, errors.New("error"))
 
-		tokensRepoMock := storage.NewMockTokensRepo(ctrl)
+		tokenerMock := auth.NewMockTokener(ctrl)
 
-		c := NewOAuthController(nil, usersRepoMock, tokensRepoMock, log)
+		c := NewOAuthController(nil, usersRepoMock, tokenerMock, log)
 
 		_, err := c.handleUser(user.Email)
 		assert.Error(t, err)

@@ -9,17 +9,6 @@ CREATE TABLE "user" (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE "token" (
-    id         SERIAL,
-    user_id    INTEGER NOT NULL,
-    string     VARCHAR NOT NULL,
-    ttl        INTEGER NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
-);
-
 CREATE TABLE "folder" (
     id         SERIAL,
     user_id    INTEGER NOT NULL,

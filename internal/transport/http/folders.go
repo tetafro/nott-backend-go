@@ -23,9 +23,9 @@ func NewFoldersController(repo storage.FoldersRepo, log logrus.FieldLogger) *Fol
 
 // GetList handles request for getting folders.
 func (c *FoldersController) GetList(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 
-	folders, err := c.repo.Get(storage.FoldersFilter{UserID: &user.ID})
+	folders, err := c.repo.Get(storage.FoldersFilter{UserID: &userID})
 	if err != nil {
 		c.log.Errorf("Failed to get folders: %v", err)
 		internalServerError(w)
@@ -37,7 +37,7 @@ func (c *FoldersController) GetList(w http.ResponseWriter, req *http.Request) {
 
 // Create handles request for creating folder.
 func (c *FoldersController) Create(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 
 	var err error
 
@@ -46,7 +46,7 @@ func (c *FoldersController) Create(w http.ResponseWriter, req *http.Request) {
 		badRequest(w, "invalid json")
 		return
 	}
-	f.UserID = user.ID
+	f.UserID = userID
 
 	if err = f.Validate(); err != nil {
 		badRequest(w, "invalid folder: "+err.Error())
@@ -65,14 +65,14 @@ func (c *FoldersController) Create(w http.ResponseWriter, req *http.Request) {
 
 // GetOne handles request for getting folder by id.
 func (c *FoldersController) GetOne(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
 		return
 	}
 
-	folders, err := c.repo.Get(storage.FoldersFilter{ID: &id, UserID: &user.ID})
+	folders, err := c.repo.Get(storage.FoldersFilter{ID: &id, UserID: &userID})
 
 	if err != nil {
 		c.log.Errorf("Failed to get folder: %v", err)
@@ -89,7 +89,7 @@ func (c *FoldersController) GetOne(w http.ResponseWriter, req *http.Request) {
 
 // Update handles request for updating folder.
 func (c *FoldersController) Update(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
@@ -102,7 +102,7 @@ func (c *FoldersController) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	f.ID = id
-	f.UserID = user.ID
+	f.UserID = userID
 
 	if err = f.Validate(); err != nil {
 		badRequest(w, "invalid folder: "+err.Error())
@@ -125,14 +125,14 @@ func (c *FoldersController) Update(w http.ResponseWriter, req *http.Request) {
 
 // Delete handles request for deleting folder.
 func (c *FoldersController) Delete(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
 		return
 	}
 
-	f := domain.Folder{ID: id, UserID: user.ID}
+	f := domain.Folder{ID: id, UserID: userID}
 	if err = c.repo.Delete(f); err != nil {
 		c.log.Errorf("Failed to update folder: %v", err)
 		internalServerError(w)

@@ -5,6 +5,7 @@ require (
 	github.com/alecthomas/chroma v0.4.0
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
 	github.com/davecgh/go-spew v1.1.1
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dlclark/regexp2 v1.1.6
 	github.com/go-chi/chi v3.3.2+incompatible
 	github.com/golang-migrate/migrate v3.4.0+incompatible

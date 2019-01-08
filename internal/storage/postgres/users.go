@@ -18,12 +18,11 @@ func NewUsersRepo(db *gorm.DB) *UsersRepo {
 	return &UsersRepo{db: db}
 }
 
-// GetByEmail gets user by his email from repository.
-func (r *UsersRepo) GetByEmail(email string) (auth.User, error) {
+// GetByID gets user by his email from repository.
+func (r *UsersRepo) GetByID(id int) (auth.User, error) {
 	var u auth.User
 
-	q := r.db.Where("email = ?", email)
-	err := q.Find(&u).Error
+	err := r.db.Find(&u).Error
 	if err == gorm.ErrRecordNotFound {
 		return auth.User{}, domain.ErrNotFound
 	}
@@ -34,12 +33,11 @@ func (r *UsersRepo) GetByEmail(email string) (auth.User, error) {
 	return u, nil
 }
 
-// GetByToken gets auth.user by his token from repository.
-func (r *UsersRepo) GetByToken(token string) (auth.User, error) {
+// GetByEmail gets user by his email from repository.
+func (r *UsersRepo) GetByEmail(email string) (auth.User, error) {
 	var u auth.User
 
-	q := r.db.Joins(`JOIN token ON token.user_id = "user".id`).
-		Where("token.string = ? AND token.created_at + token.ttl * INTERVAL '1 second' > NOW()", token)
+	q := r.db.Where("email = ?", email)
 	err := q.Find(&u).Error
 	if err == gorm.ErrRecordNotFound {
 		return auth.User{}, domain.ErrNotFound

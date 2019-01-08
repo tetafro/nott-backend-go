@@ -25,6 +25,9 @@ type config struct {
 	PGPassword   string `envconfig:"POSTGRES_PASSWORD" required:"true"`
 	PGMigrations string `envconfig:"POSTGRES_MIGRATIONS" required:"true"`
 
+	// Secret key for signing JWT.
+	SignKey string `envconfig:"SIGN_KEY" required:"true"`
+
 	// OAuth: GitHub
 	GithubClientID     string `envconfig:"GITHUB_CLIENT_ID" required:"true"`
 	GithubClientSecret string `envconfig:"GITHUB_CLIENT_SECRET" required:"true"`

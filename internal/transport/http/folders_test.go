@@ -46,7 +46,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 
 		c.GetList(w, req)
 
@@ -91,7 +91,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 
 		c.GetList(w, req)
 
@@ -117,7 +117,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 
 		c.Create(w, req)
 
@@ -158,7 +158,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.Update(w, req)
@@ -186,7 +186,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.GetOne(w, req)
@@ -226,7 +226,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.GetOne(w, req)
@@ -251,7 +251,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodGet, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.GetOne(w, req)
@@ -278,7 +278,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPut, url, bytes.NewBuffer(payload))
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.Update(w, req)
@@ -320,7 +320,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPut, url, bytes.NewBuffer(payload))
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.Update(w, req)
@@ -344,7 +344,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodDelete, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.Delete(w, req)
@@ -368,7 +368,7 @@ func TestFoldersController(t *testing.T) {
 		url := "/"
 		w := httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPut, url, nil)
-		req = addUser(req, user)
+		req = addUserID(req, user.ID)
 		req = addID(req, id)
 
 		c.Delete(w, req)

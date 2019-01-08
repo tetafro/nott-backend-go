@@ -8,15 +8,13 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/tetafro/nott-backend-go/internal/auth"
-	"github.com/tetafro/nott-backend-go/internal/domain"
-	"github.com/tetafro/nott-backend-go/internal/storage"
 )
 
-// userKey is a key for user structure inside request context.
-type userKey struct{}
+// userIDKey is a key for user id value inside request context.
+type userIDKey struct{}
 
 // NewAuthMiddleware creates middleware that authenticates users.
-func NewAuthMiddleware(users storage.UsersRepo, log logrus.FieldLogger) func(http.Handler) http.Handler {
+func NewAuthMiddleware(tokener auth.Tokener, log logrus.FieldLogger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			token := getToken(req)
@@ -24,40 +22,35 @@ func NewAuthMiddleware(users storage.UsersRepo, log logrus.FieldLogger) func(htt
 				unauthorized(w)
 				return
 			}
-			u, err := users.GetByToken(token)
-			if err == domain.ErrNotFound {
+			id, err := tokener.Parse(token)
+			if err != nil {
 				unauthorized(w)
 				return
 			}
-			if err != nil {
-				log.Errorf("Failed to get user from database: %v", err)
-				internalServerError(w)
-				return
-			}
-			req = addUser(req, u)
+			req = addUserID(req, id)
 			next.ServeHTTP(w, req)
 		})
 	}
 }
 
-// addUser adds user to request context.
-func addUser(req *http.Request, u auth.User) *http.Request {
+// addUserID adds user id to request context.
+func addUserID(req *http.Request, id int) *http.Request {
 	ctx := req.Context()
-	ctx = context.WithValue(ctx, userKey{}, u)
+	ctx = context.WithValue(ctx, userIDKey{}, id)
 	return req.WithContext(ctx)
 }
 
-// getUser extracts user from request context.
-func getUser(req *http.Request) *auth.User {
-	val := req.Context().Value(userKey{})
+// getUserID extracts user id from request context.
+func getUserID(req *http.Request) int {
+	val := req.Context().Value(userIDKey{})
 	if val == nil {
-		panic("Failed to get user from request context")
+		panic("Failed to get user id from request context")
 	}
-	u, ok := val.(auth.User)
+	id, ok := val.(int)
 	if !ok {
-		panic("Unknown user value in request context")
+		panic("Invalid user id type in request context")
 	}
-	return &u
+	return id
 }
 
 // getToken gets token from HTTP header.

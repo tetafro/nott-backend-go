@@ -34,6 +34,19 @@ func (m *MockUsersRepo) EXPECT() *MockUsersRepoMockRecorder {
 	return m.recorder
 }
 
+// GetByID mocks base method
+func (m *MockUsersRepo) GetByID(id int) (auth.User, error) {
+	ret := m.ctrl.Call(m, "GetByID", id)
+	ret0, _ := ret[0].(auth.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID
+func (mr *MockUsersRepoMockRecorder) GetByID(id interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockUsersRepo)(nil).GetByID), id)
+}
+
 // GetByEmail mocks base method
 func (m *MockUsersRepo) GetByEmail(email string) (auth.User, error) {
 	ret := m.ctrl.Call(m, "GetByEmail", email)
@@ -45,19 +58,6 @@ func (m *MockUsersRepo) GetByEmail(email string) (auth.User, error) {
 // GetByEmail indicates an expected call of GetByEmail
 func (mr *MockUsersRepoMockRecorder) GetByEmail(email interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUsersRepo)(nil).GetByEmail), email)
-}
-
-// GetByToken mocks base method
-func (m *MockUsersRepo) GetByToken(token string) (auth.User, error) {
-	ret := m.ctrl.Call(m, "GetByToken", token)
-	ret0, _ := ret[0].(auth.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetByToken indicates an expected call of GetByToken
-func (mr *MockUsersRepoMockRecorder) GetByToken(token interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByToken", reflect.TypeOf((*MockUsersRepo)(nil).GetByToken), token)
 }
 
 // Create mocks base method
@@ -84,54 +84,6 @@ func (m *MockUsersRepo) Update(arg0 auth.User) (auth.User, error) {
 // Update indicates an expected call of Update
 func (mr *MockUsersRepoMockRecorder) Update(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUsersRepo)(nil).Update), arg0)
-}
-
-// MockTokensRepo is a mock of TokensRepo interface
-type MockTokensRepo struct {
-	ctrl     *gomock.Controller
-	recorder *MockTokensRepoMockRecorder
-}
-
-// MockTokensRepoMockRecorder is the mock recorder for MockTokensRepo
-type MockTokensRepoMockRecorder struct {
-	mock *MockTokensRepo
-}
-
-// NewMockTokensRepo creates a new mock instance
-func NewMockTokensRepo(ctrl *gomock.Controller) *MockTokensRepo {
-	mock := &MockTokensRepo{ctrl: ctrl}
-	mock.recorder = &MockTokensRepoMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockTokensRepo) EXPECT() *MockTokensRepoMockRecorder {
-	return m.recorder
-}
-
-// Create mocks base method
-func (m *MockTokensRepo) Create(arg0 auth.Token) (auth.Token, error) {
-	ret := m.ctrl.Call(m, "Create", arg0)
-	ret0, _ := ret[0].(auth.Token)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Create indicates an expected call of Create
-func (mr *MockTokensRepoMockRecorder) Create(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTokensRepo)(nil).Create), arg0)
-}
-
-// Delete mocks base method
-func (m *MockTokensRepo) Delete(arg0 auth.Token) error {
-	ret := m.ctrl.Call(m, "Delete", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Delete indicates an expected call of Delete
-func (mr *MockTokensRepoMockRecorder) Delete(arg0 interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTokensRepo)(nil).Delete), arg0)
 }
 
 // MockFoldersRepo is a mock of FoldersRepo interface

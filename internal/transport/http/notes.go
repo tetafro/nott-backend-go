@@ -25,10 +25,10 @@ func NewNotesController(repo storage.NotesRepo, log logrus.FieldLogger) *NotesCo
 
 // GetList handles request for getting notes.
 func (c *NotesController) GetList(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	notepadID := req.URL.Query().Get("notepad_id")
 
-	f := storage.NotesFilter{UserID: &user.ID}
+	f := storage.NotesFilter{UserID: &userID}
 
 	if notepadID != "" {
 		nid, err := strconv.Atoi(notepadID)
@@ -51,14 +51,14 @@ func (c *NotesController) GetList(w http.ResponseWriter, req *http.Request) {
 
 // GetOne handles request for getting note by id.
 func (c *NotesController) GetOne(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
 		return
 	}
 
-	notes, err := c.repo.Get(storage.NotesFilter{ID: &id, UserID: &user.ID})
+	notes, err := c.repo.Get(storage.NotesFilter{ID: &id, UserID: &userID})
 	if err != nil {
 		c.log.Errorf("Failed to get note: %v", err)
 		internalServerError(w)
@@ -78,7 +78,7 @@ func (c *NotesController) GetOne(w http.ResponseWriter, req *http.Request) {
 
 // Create handles request for creating note.
 func (c *NotesController) Create(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 
 	var err error
 
@@ -87,7 +87,7 @@ func (c *NotesController) Create(w http.ResponseWriter, req *http.Request) {
 		badRequest(w, "invalid json")
 		return
 	}
-	n.UserID = user.ID
+	n.UserID = userID
 
 	if err = n.Validate(); err != nil {
 		badRequest(w, "invalid note"+err.Error())
@@ -106,7 +106,7 @@ func (c *NotesController) Create(w http.ResponseWriter, req *http.Request) {
 
 // Update handles request for updating note.
 func (c *NotesController) Update(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
@@ -119,7 +119,7 @@ func (c *NotesController) Update(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	n.ID = id
-	n.UserID = user.ID
+	n.UserID = userID
 
 	if err = n.Validate(); err != nil {
 		badRequest(w, "invalid note"+err.Error())
@@ -142,14 +142,14 @@ func (c *NotesController) Update(w http.ResponseWriter, req *http.Request) {
 
 // Delete handles request for deleting note.
 func (c *NotesController) Delete(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 	id, err := getID(req)
 	if err != nil {
 		notFound(w)
 		return
 	}
 
-	n := domain.Note{ID: id, UserID: user.ID}
+	n := domain.Note{ID: id, UserID: userID}
 	if err = c.repo.Delete(n); err != nil {
 		c.log.Errorf("Failed to update note: %v", err)
 		internalServerError(w)

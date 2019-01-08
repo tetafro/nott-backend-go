@@ -38,7 +38,7 @@ func main() {
 	}
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
-	app, err := application.New(db, addr, providers, log)
+	app, err := application.New(db, addr, cfg.SignKey, providers, log)
 	if err != nil {
 		log.Fatalf("Failed to init the application: %v", err)
 	}

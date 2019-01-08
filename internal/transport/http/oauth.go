@@ -16,7 +16,7 @@ import (
 type OAuthController struct {
 	providers map[string]*auth.OAuthProvider
 	users     storage.UsersRepo
-	tokens    storage.TokensRepo
+	tokener   auth.Tokener
 	log       logrus.FieldLogger
 }
 
@@ -24,10 +24,10 @@ type OAuthController struct {
 func NewOAuthController(
 	p map[string]*auth.OAuthProvider,
 	u storage.UsersRepo,
-	t storage.TokensRepo,
+	t auth.Tokener,
 	log logrus.FieldLogger,
 ) *OAuthController {
-	return &OAuthController{providers: p, users: u, tokens: t, log: log}
+	return &OAuthController{providers: p, users: u, tokener: t, log: log}
 }
 
 // Providers handles request for getting list of currently
@@ -93,9 +93,9 @@ func (c *OAuthController) handleUser(email string) (auth.Token, error) {
 	}
 
 	// Generate token
-	t, err := c.tokens.Create(auth.Token{UserID: u.ID})
+	t, err := c.tokener.Issue(u)
 	if err != nil {
-		return auth.Token{}, errors.Wrap(err, "create token")
+		return auth.Token{}, errors.Wrap(err, "issue token")
 	}
 
 	return t, nil

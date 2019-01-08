@@ -13,18 +13,14 @@ import (
 
 // AuthController handles HTTP API requests.
 type AuthController struct {
-	users  storage.UsersRepo
-	tokens storage.TokensRepo
-	log    logrus.FieldLogger
+	users   storage.UsersRepo
+	tokener auth.Tokener
+	log     logrus.FieldLogger
 }
 
 // NewAuthController creates new controller.
-func NewAuthController(
-	users storage.UsersRepo,
-	tokens storage.TokensRepo,
-	log logrus.FieldLogger,
-) *AuthController {
-	return &AuthController{users: users, tokens: tokens, log: log}
+func NewAuthController(u storage.UsersRepo, t auth.Tokener, log logrus.FieldLogger) *AuthController {
+	return &AuthController{users: u, tokener: t, log: log}
 }
 
 // Register handles request for registering new users.
@@ -48,14 +44,14 @@ func (c *AuthController) Register(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create user in the repository
-	u := auth.User{Email: body.Email}
-	u.Password, err = auth.HashPassword(body.Password)
+	user := auth.User{Email: body.Email}
+	user.Password, err = auth.HashPassword(body.Password)
 	if err != nil {
 		c.log.Errorf("Failed to hash password: %v", err)
 		internalServerError(w)
 		return
 	}
-	u, err = c.users.Create(u)
+	user, err = c.users.Create(user)
 	if err != nil {
 		c.log.Errorf("Failed to create user: %v", err)
 		internalServerError(w)
@@ -63,9 +59,9 @@ func (c *AuthController) Register(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Generate token
-	t, err := c.tokens.Create(auth.Token{UserID: u.ID})
+	t, err := c.tokener.Issue(user)
 	if err != nil {
-		c.log.Errorf("Failed to create token: %v", err)
+		c.log.Errorf("Failed to issue token: %v", err)
 		internalServerError(w)
 		return
 	}
@@ -99,9 +95,9 @@ func (c *AuthController) Login(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Generate token
-	t, err := c.tokens.Create(auth.Token{UserID: user.ID})
+	t, err := c.tokener.Issue(user)
 	if err != nil {
-		c.log.Errorf("Failed to create token: %v", err)
+		c.log.Errorf("Failed to issue token: %v", err)
 		internalServerError(w)
 		return
 	}
@@ -109,65 +105,54 @@ func (c *AuthController) Login(w http.ResponseWriter, req *http.Request) {
 	respond(w, http.StatusOK, t)
 }
 
-// Logout handles request for logging out.
-func (c *AuthController) Logout(w http.ResponseWriter, req *http.Request) {
-	token := getToken(req)
-	if token == "" {
-		unauthorized(w)
+// GetProfile handles request for getting current logged in user.
+func (c *AuthController) GetProfile(w http.ResponseWriter, req *http.Request) {
+	userID := getUserID(req)
+
+	user, err := c.users.GetByID(userID)
+	if err == domain.ErrNotFound {
+		notFound(w)
 		return
 	}
-	if err := c.tokens.Delete(auth.Token{String: token}); err != nil {
+	if err != nil {
+		c.log.Errorf("Failed to get user: %v", err)
 		internalServerError(w)
 		return
 	}
-	http.Redirect(w, req, "/", http.StatusTemporaryRedirect)
-}
 
-// GetProfile handles request for getting current logged in user.
-func (c *AuthController) GetProfile(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
 	respond(w, http.StatusOK, user)
 }
 
 // UpdateProfile handles request for getting current logged in user.
 func (c *AuthController) UpdateProfile(w http.ResponseWriter, req *http.Request) {
-	user := getUser(req)
+	userID := getUserID(req)
 
 	var err error
 
-	u := auth.User{}
-	if err = json.NewDecoder(req.Body).Decode(&u); err != nil {
+	user := auth.User{}
+	if err = json.NewDecoder(req.Body).Decode(&user); err != nil {
 		badRequest(w, "invalid json")
 		return
 	}
+	user.ID = userID
 
-	if err = u.Validate(); err != nil {
+	if err = user.Validate(); err != nil {
 		badRequest(w, "invalid user: "+err.Error())
 		return
 	}
 
-	// Get all available fields
-	var modified bool
-	if user.Email != u.Email {
-		user.Email = u.Email
-		modified = true
+	user, err = c.users.Update(user)
+	if err == domain.ErrNotFound {
+		notFound(w)
+		return
+	}
+	if err != nil {
+		c.log.Errorf("Failed to update user: %v", err)
+		internalServerError(w)
+		return
 	}
 
-	// Save model if there was any changes
-	if modified {
-		u, err = c.users.Update(*user)
-		if err == domain.ErrNotFound {
-			notFound(w)
-			return
-		}
-		if err != nil {
-			c.log.Errorf("Failed to update user: %v", err)
-			internalServerError(w)
-			return
-		}
-	}
-
-	respond(w, http.StatusOK, u)
+	respond(w, http.StatusOK, user)
 }
 
 type authRequest struct {

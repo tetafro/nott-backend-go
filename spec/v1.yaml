@@ -76,16 +76,6 @@ paths:
           $ref: "#/responses/BadRequest"
         "500":
           $ref: "#/responses/InternalServerError"
-  /logout:
-    post:
-      description: Sign out using current user.
-      responses:
-        "307":
-          $ref: "#/responses/TemporaryRedirect"
-        "401":
-          $ref: "#/responses/Unauthorized"
-        "500":
-          $ref: "#/responses/InternalServerError"
   /oauth/providers:
     get:
       description: Get list of available OAuth providers.

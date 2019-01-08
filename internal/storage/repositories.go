@@ -7,16 +7,10 @@ import (
 
 // UsersRepo deals with users repository.
 type UsersRepo interface {
+	GetByID(id int) (auth.User, error)
 	GetByEmail(email string) (auth.User, error)
-	GetByToken(token string) (auth.User, error)
 	Create(auth.User) (auth.User, error)
 	Update(auth.User) (auth.User, error)
-}
-
-// TokensRepo deals with tokens repository.
-type TokensRepo interface {
-	Create(auth.Token) (auth.Token, error)
-	Delete(auth.Token) error
 }
 
 // FoldersRepo deals with folders repository.
