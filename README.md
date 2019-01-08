@@ -24,7 +24,6 @@ docker run -d \
 Create and populate config
 ```sh
 cp .env.example .env
-source .env
 ```
 
 Build and run the application
