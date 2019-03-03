@@ -1,6 +1,6 @@
 .PHONY: dep
 dep:
-	@ go mod download
+	@ go mod vendor
 
 .PHONY: mock
 mock:
