@@ -12,9 +12,11 @@ This repository provides backend written in go.
 
 Run PostgreSQL
 ```sh
+docker network create nott
 docker run -d \
-    --name postgres-nott \
-    --publish 127.0.0.1:5432:5432 \
+    --restart unless-stopped \
+    --network nott \
+    --name nott-db \
     --env "POSTGRES_USER=postgres" \
     --env "POSTGRES_PASSWORD=postgres" \
     --env "POSTGRES_DB=nott" \
