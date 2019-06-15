@@ -2,7 +2,7 @@ version: 2
 jobs:
   dep:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
@@ -17,7 +17,7 @@ jobs:
             - /go/pkg/mod
   test:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
@@ -31,7 +31,7 @@ jobs:
           command: go test ./...
   lint:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
@@ -48,7 +48,7 @@ jobs:
           command: golangci-lint run
   codecov:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go
@@ -61,7 +61,7 @@ jobs:
       - run: bash <(curl -s https://codecov.io/bash)
   publish:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
         environment:
           GO111MODULE: "on"
     working_directory: /go/src/github.com/tetafro/nott-backend-go

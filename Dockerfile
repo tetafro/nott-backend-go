@@ -1,4 +1,4 @@
-FROM golang:1.11-alpine AS build
+FROM golang:1.12-alpine AS build
 
 WORKDIR /build
 
@@ -9,7 +9,7 @@ COPY . .
 RUN go mod download && \
     go build -o ./bin/nott ./cmd/nott
 
-FROM alpine:3.7
+FROM alpine:3.9
 
 WORKDIR /app
 
